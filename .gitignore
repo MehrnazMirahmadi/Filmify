@@ -1,0 +1,211 @@
+﻿# Comprehensive .gitignore for .NET (Visual Studio / Rider) multi-project solutions
+# Reference: GitHub VisualStudio.gitignore + Rider + ASP.NET Core + common tools
+
+############################
+# Core build artifacts
+############################
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.log
+[Tt]est[Rr]esults/
+[Aa]rtifacts/
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+[Xx]64/
+[Xx]86/
+[Bb]uild/
+[Bb]uilds/
+out/
+app.publish/
+publish/
+**/[Bb]in/
+**/[Oo]bj/
+**/TestResults/
+
+
+# VS solution user-specific
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+_ReSharper*/
+*.DotSettings.user
+**/_ReSharper.Caches/
+.ReSharper*/
+resharper.log
+
+# VS Code (keep common shared files)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+############################
+# .NET / NuGet
+############################
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/PublishProfiles/*
+AppPackages/
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+# NuGet v3 cache folders
+.nuget/packages/*
+
+############################
+# ASP.NET Core / Web
+############################
+# Frontend tooling
+node_modules/
+dist/
+build/
+.temp/
+tmp/
+.temp*/
+.npm/
+.npmrc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.stylelintcache
+
+# Static web libraries (if using libman or similar)
+wwwroot/lib/
+# Optional: if node modules are under wwwroot
+wwwroot/node_modules/
+
+# Local environment variables
+.env
+.env.*
+.envrc
+
+# Local appsettings (keep base appsettings.json tracked)
+appsettings.Development.json
+appsettings.*.Development.json
+appsettings.Local.json
+appsettings.*.Local.json
+appsettings.*.Secrets.json
+secrets.json
+
+# Certificates / Keys
+*.pfx
+*.p12
+*.p7b
+*.snk
+*.key
+*.cer
+
+# Consider secrets folder in repo root
+Keys/
+!Keys/README.md
+!Keys/*.example
+!Keys/*.template
+
+############################
+# Testing / Coverage / Benchmarking
+############################
+*.coverage
+*.coveragexml
+.coverage
+.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+.trx
+TestResult.xml
+BenchmarkDotNet.Artifacts/
+
+# NCrunch
+_nCrunch_*
+.*crunch*.local.xml
+NCrunch*
+*.ncrunchsolution
+
+############################
+# Tooling / Analysis
+############################
+# Sonar
+.sonarqube/
+.scannerwork/
+.sonar/
+
+# StyleCop
+StyleCopReport.xml
+
+# dotnet tooling
+.dotnet-tools/
+
+############################
+# Databases / Local data
+############################
+*.mdf
+*.ldf
+*.ndf
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+############################
+# OS / Editor junk
+############################
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+
+############################
+# Docker / Containers
+############################
+# Keep canonical compose files; ignore local overrides
+docker-compose.override.yml
+docker-compose.*.override.yml
+*.orchestration.json
+
+############################
+# Misc
+############################
+# Generated code
+Generated_Code/
+# Temporary
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+~$*
+
+# End of .gitignore
