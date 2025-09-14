@@ -5,7 +5,7 @@ namespace Filmify.Domain.Entities;
 
 public class Film : BaseEntity
 {
-    public int FilmID { get; set; }
+    public long FilmId { get; set; }
 
     public string FilmTitle { get; set; } = null!;
     public Duration? Duration { get; set; }
@@ -24,7 +24,7 @@ public class Film : BaseEntity
     public Guid? ApprovalUserID { get; set; }        
     public DateTime? ApprovalDate { get; set; }     
 
-    // روابط
+    // 
     public ICollection<FilmBox> FilmBoxes { get; set; } = new List<FilmBox>();
     public ICollection<FilmTag> FilmTags { get; set; } = new List<FilmTag>();
 }

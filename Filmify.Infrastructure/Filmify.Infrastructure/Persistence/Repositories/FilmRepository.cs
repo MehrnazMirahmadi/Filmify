@@ -11,7 +11,6 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
     {
         return await _dbSet.AnyAsync(f => f.FilmTitle == title);
     }
-
     public async Task<IEnumerable<Film>> SearchAsync(string? key, int page = 1, int pageSize = 10)
     {
         var query = _dbSet.AsQueryable();
@@ -26,5 +25,21 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
             .Take(pageSize)
             .AsNoTracking()
             .ToListAsync();
+    }
+    public async Task<Film?> GetFilmWithRelationsAsync(long id)
+    {
+        return await db.Films
+            .Include(f => f.FilmTags).ThenInclude(ft => ft.Tag)
+            .Include(f => f.FilmBoxes).ThenInclude(fb => fb.Box)
+            .FirstOrDefaultAsync(f => f.FilmId == id);
+    }
+    // ✅ QueryWithRelations method
+    public IQueryable<Film> QueryWithRelations()
+    {
+        return db.Set<Film>()
+                  .Include(f => f.FilmBoxes)
+                      .ThenInclude(fb => fb.Box)
+                  .Include(f => f.FilmTags)
+                      .ThenInclude(ft => ft.Tag);
     }
 }

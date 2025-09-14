@@ -2,8 +2,8 @@
 
 public class FilmTag
 {
-    public int FilmID { get; set; }
-    public int TagID { get; set; }
+    public long FilmId { get; set; }
+    public long TagId { get; set; }
     public Film Film { get; set; } = null!;
     public Tag Tag { get; set; } = null!;
 }
