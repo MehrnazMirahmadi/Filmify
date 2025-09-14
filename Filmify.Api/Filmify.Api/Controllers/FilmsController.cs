@@ -6,18 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace Filmify.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class FilmController : ControllerBase
+public class FilmsController : ControllerBase
 {
     private readonly IFilmService _filmService;
 
-    public FilmController(IFilmService filmService)
+    public FilmsController(IFilmService filmService)
     {
         _filmService = filmService;
     }
 
     // GET: api/Film/{id}
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetFilm(long id)
+    public async Task<IActionResult> GetById(long id)
     {
         var result = await _filmService.GetFilmByIdAsync(id);
         if (result.IsRight)
@@ -28,7 +28,7 @@ public class FilmController : ControllerBase
 
     // GET: api/Film
     [HttpGet]
-    public async Task<IActionResult> GetFilms([FromQuery] FilmFilterRequest filter)
+    public async Task<IActionResult> GetAll([FromQuery] FilmFilterRequest filter)
     {
 
         var sortOptions = new SortOptions

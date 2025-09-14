@@ -1,0 +1,23 @@
+﻿@model List<Filmify.Application.DTOs.Film.FilmDto>
+
+<h2>Films</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Boxes</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var film in Model)
+        {
+            <tr>
+                <td>@film.FilmTitle</td>
+                <td>@string.Join(", ", film.Boxes)</td>
+                <td>@string.Join(", ", film.Tags)</td>
+            </tr>
+        }
+    </tbody>
+</table>

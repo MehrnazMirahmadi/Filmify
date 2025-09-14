@@ -1,7 +1,20 @@
+using Filmify.UI.Services;
+using Polly;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<FilmApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7053/");
+}).AddTransientHttpErrorPolicy(policyBuilder =>
+    policyBuilder.WaitAndRetryAsync(
+        3,
+        retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+    )
+);
+
 
 var app = builder.Build();
 
