@@ -48,6 +48,29 @@ namespace Filmify.Infrastructure.Migrations
                     b.ToTable("Boxes");
                 });
 
+            modelBuilder.Entity("Filmify.Domain.Entities.Category", b =>
+                {
+                    b.Property<long>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CategoryId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RegisteringUserID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("Filmify.Domain.Entities.Film", b =>
                 {
                     b.Property<long>("FilmId")
@@ -65,6 +88,9 @@ namespace Filmify.Infrastructure.Migrations
                     b.Property<long?>("Capacity")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("CoverImage")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -72,6 +98,9 @@ namespace Filmify.Infrastructure.Migrations
                     b.Property<string>("FileUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<float?>("FilmScore")
+                        .HasColumnType("real");
 
                     b.Property<string>("FilmTitle")
                         .IsRequired()
@@ -92,10 +121,15 @@ namespace Filmify.Infrastructure.Migrations
                     b.Property<Guid>("RegisteringUserID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ViewCount")
                         .HasColumnType("int");
 
                     b.HasKey("FilmId");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Films");
                 });
@@ -164,6 +198,12 @@ namespace Filmify.Infrastructure.Migrations
 
             modelBuilder.Entity("Filmify.Domain.Entities.Film", b =>
                 {
+                    b.HasOne("Filmify.Domain.Entities.Category", "Category")
+                        .WithMany("Films")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("Filmify.Domain.ValueObjects.Duration", "Duration", b1 =>
                         {
                             b1.Property<long>("FilmId")
@@ -184,6 +224,8 @@ namespace Filmify.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("FilmId");
                         });
+
+                    b.Navigation("Category");
 
                     b.Navigation("Duration");
                 });
@@ -229,6 +271,11 @@ namespace Filmify.Infrastructure.Migrations
             modelBuilder.Entity("Filmify.Domain.Entities.Box", b =>
                 {
                     b.Navigation("FilmBoxes");
+                });
+
+            modelBuilder.Entity("Filmify.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Films");
                 });
 
             modelBuilder.Entity("Filmify.Domain.Entities.Film", b =>

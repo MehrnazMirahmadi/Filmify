@@ -1,0 +1,50 @@
+﻿@model List<Filmify.Application.DTOs.Film.FilmDto>
+
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="home__title"> <b>@Model.FirstOrDefault()?.CategoryName</b></h1>
+
+        <button class="home__nav home__nav--prev" type="button">
+            <i class="icon ion-ios-arrow-round-back"></i>
+        </button>
+        <button class="home__nav home__nav--next" type="button">
+            <i class="icon ion-ios-arrow-round-forward"></i>
+        </button>
+    </div>
+
+    <div class="col-12">
+        <div class="owl-carousel home__carousel">
+            @foreach (var film in Model)
+            {
+                <div class="item">
+                  
+                    <div class="card card--big">
+                        <div class="card__cover">
+                            <img src="img/covers/cover3.jpg" alt="">
+                            <a href="#" class="card__play">
+                                <i class="icon ion-ios-play"></i>
+                            </a>
+                        </div>
+                        <div class="card__content">
+                            <h3 class="card__title"><a href="#">@film.FilmTitle</a></h3>
+                           
+                              @if (film.Tags != null && film.Tags.Any())
+                                {
+                                      <span class="card__category">
+                                           @foreach (var tag in film.Tags)
+                                           {
+                                               <a href="@Url.Action("ByTag", "Films", new { tag = tag })">@tag</a>
+                                           }
+                                      </span>
+                                  }
+
+                            <span class="card__rate"><i class="icon ion-ios-star"></i>@film.FilmScore</span>
+                        </div>
+                    </div>
+                  
+                </div>
+            }
+        </div>
+    </div>
+</div>

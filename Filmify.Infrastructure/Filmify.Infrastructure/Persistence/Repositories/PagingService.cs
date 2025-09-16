@@ -7,7 +7,7 @@ namespace Filmify.Infrastructure.Persistence.Repositories;
 
 public class PagingService : IPagingService
 {
-    public async Task<KeysetPagingResult<T>> ToHybridPageAsync<T, TKey>(
+    public async Task<KeysetPagingResult<T, TKey>> ToHybridPageAsync<T, TKey>(
         IQueryable<T> query,
         Expression<Func<T, TKey>> keySelector,
         KeysetPagingRequest request,
@@ -16,7 +16,7 @@ public class PagingService : IPagingService
     {
         if (request == null) throw new ArgumentNullException(nameof(request));
 
-        // --- OFFSET Pagination if PageNumber is specified
+        // --- OFFSET Pagination
         if (request.PageNumber.HasValue && request.PageNumber.Value > 0)
         {
             int skip = (request.PageNumber.Value - 1) * request.PageSize;
@@ -28,13 +28,14 @@ public class PagingService : IPagingService
             bool hasNext = list.Count > request.PageSize;
             if (hasNext) list.RemoveAt(list.Count - 1);
 
-            return new KeysetPagingResult<T>(list.AsReadOnly(), hasNext);
+            TKey lastKey = list.Any() ? keySelector.Compile().Invoke(list.Last()) : default!;
+            return new KeysetPagingResult<T, TKey>(list.AsReadOnly(), hasNext, lastKey);
         }
 
-        // --- Keyset Pagination if LastKey is specified
+        // --- Keyset Pagination
         if (!string.IsNullOrWhiteSpace(request.LastKey))
         {
-            TKey lastKeyValue = ParseKey<TKey>(request.LastKey);
+            TKey lastKeyValue = (TKey)Convert.ChangeType(request.LastKey, typeof(TKey));
 
             var parameter = keySelector.Parameters[0];
             Expression member = keySelector.Body;
@@ -60,28 +61,9 @@ public class PagingService : IPagingService
         bool hasNextPage = keysetList.Count > request.PageSize;
         if (hasNextPage) keysetList.RemoveAt(keysetList.Count - 1);
 
-        return new KeysetPagingResult<T>(keysetList.AsReadOnly(), hasNextPage);
+        TKey lastKeyForResult = keysetList.Any() ? keySelector.Compile().Invoke(keysetList.Last()) : default!;
+        return new KeysetPagingResult<T, TKey>(keysetList.AsReadOnly(), hasNextPage, lastKeyForResult);
     }
 
-    private static TKey ParseKey<TKey>(string keyStr)
-    {
-        var t = typeof(TKey);
-        try
-        {
-            if (t == typeof(Guid))
-                return (TKey)(object)Guid.Parse(keyStr);
-            if (t.IsEnum)
-                return (TKey)Enum.Parse(t, keyStr, true);
-            if (t == typeof(DateTime))
-                return (TKey)(object)DateTime.Parse(keyStr);
-            if (t == typeof(DateTimeOffset))
-                return (TKey)(object)DateTimeOffset.Parse(keyStr);
-            return (TKey)Convert.ChangeType(keyStr, t);
-        }
-        catch (Exception ex)
-        {
-            throw new ArgumentException($"Cannot convert LastKey '{keyStr}' to {t.Name}.", ex);
-        }
-    }
+  
 }
-

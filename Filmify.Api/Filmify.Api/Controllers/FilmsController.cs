@@ -1,4 +1,5 @@
-﻿using Filmify.Application.Common.Sorting;
+﻿using Filmify.Application.Common.Paging;
+using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
 using Filmify.Application.DTOs.Film;
 using Microsoft.AspNetCore.Mvc;
@@ -6,20 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace Filmify.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class FilmsController : ControllerBase
+public class FilmsController(IFilmService filmService) : ControllerBase
 {
-    private readonly IFilmService _filmService;
-
-    public FilmsController(IFilmService filmService)
-    {
-        _filmService = filmService;
-    }
+  
 
     // GET: api/Film/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var result = await _filmService.GetFilmByIdAsync(id);
+        var result = await filmService.GetFilmByIdAsync(id);
         if (result.IsRight)
             return Ok(result.Right);
         else
@@ -37,7 +33,7 @@ public class FilmsController : ControllerBase
             Direction = filter.Direction
         };
 
-        var result = await _filmService.GetFilmsAsync(filter, sortOptions);
+        var result = await filmService.GetFilmsAsync(filter, sortOptions);
 
         if (result.IsRight)
             return Ok(result.Right);
@@ -51,7 +47,7 @@ public class FilmsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateFilm([FromBody] FilmCreateDto dto)
     {
-        var result = await _filmService.CreateFilmAsync(dto);
+        var result = await filmService.CreateFilmAsync(dto);
         if (result.IsRight)
             return Ok(result.Right);
         else
@@ -62,7 +58,7 @@ public class FilmsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateFilm(long id, [FromBody] FilmUpdateDto dto)
     {
-        var result = await _filmService.UpdateFilmAsync(id, dto);
+        var result = await filmService.UpdateFilmAsync(id, dto);
         if (result.IsRight)
             return Ok(result.Right);
         else
@@ -73,11 +69,22 @@ public class FilmsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteFilm(long id)
     {
-        var result = await _filmService.DeleteFilmAsync(id);
+        var result = await filmService.DeleteFilmAsync(id);
         if (result.IsRight)
             return Ok(result.Right);
         else
             return NotFound(new { Message = result.Left });
 
     }
+
+    [HttpGet("category/{categoryId:long}")]
+    public async Task<IActionResult> GetByCategory(long categoryId, [FromQuery] KeysetPagingRequest paging)
+    {
+        var result = await filmService.GetFilmsByCategoryAsync(categoryId, paging);
+        if (result.IsRight)
+            return Ok(result.Right);
+        else
+            return NotFound(new { Message = result.Left });
+    }
+  
 }

@@ -7,6 +7,14 @@ public static class DbInitializer
 {
     public static async Task SeedAsync(FilmifyDbContext context)
     {
+        // --- Categories ---
+        if (!await context.Categories.AnyAsync())
+        {
+            var categories = SeedData.GetCategories();
+            await context.Categories.AddRangeAsync(categories);
+            await context.SaveChangesAsync();
+        }
+
         // --- Boxes ---
         if (!await context.Boxes.AnyAsync())
         {
@@ -26,7 +34,11 @@ public static class DbInitializer
         // --- Films ---
         if (!await context.Films.AnyAsync())
         {
-            var films = SeedData.GetFilms(await context.Boxes.ToListAsync(), await context.Tags.ToListAsync());
+            var films = SeedData.GetFilms(
+                       await context.Boxes.ToListAsync(),
+                       await context.Tags.ToListAsync(),
+                       await context.Categories.ToListAsync()
+                      );
             await context.Films.AddRangeAsync(films);
             await context.SaveChangesAsync();
         }

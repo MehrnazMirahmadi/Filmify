@@ -7,6 +7,8 @@ namespace Filmify.Infrastructure.Persistence.Repositories;
 
 public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRepository
 {
+
+
     public async Task<bool> CheckDuplicateTitleAsync(string title)
     {
         return await _dbSet.AnyAsync(f => f.FilmTitle == title);
@@ -36,10 +38,11 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
     // ✅ QueryWithRelations method
     public IQueryable<Film> QueryWithRelations()
     {
-        return db.Set<Film>()
-                  .Include(f => f.FilmBoxes)
-                      .ThenInclude(fb => fb.Box)
-                  .Include(f => f.FilmTags)
-                      .ThenInclude(ft => ft.Tag);
+        return db.Films
+       .Include(f => f.Category)
+       .Include(f => f.FilmBoxes).ThenInclude(fb => fb.Box)
+       .Include(f => f.FilmTags).ThenInclude(ft => ft.Tag);
     }
+
+ 
 }

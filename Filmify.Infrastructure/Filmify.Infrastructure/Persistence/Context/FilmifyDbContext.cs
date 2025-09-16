@@ -15,6 +15,7 @@ public class FilmifyDbContext : DbContext
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<FilmBox> FilmBoxes => Set<FilmBox>();
     public DbSet<FilmTag> FilmTags => Set<FilmTag>();
+    public DbSet<Category> Categories => Set<Category>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

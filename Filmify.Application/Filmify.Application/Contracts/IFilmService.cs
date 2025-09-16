@@ -8,8 +8,10 @@ namespace Filmify.Application.Contracts;
 public interface IFilmService
 {
     Task<Either<string, FilmDto>> GetFilmByIdAsync(long id);
-    Task<Either<string, KeysetPagingResult<FilmDto>>> GetFilmsAsync(FilmFilterRequest filter, SortOptions? sort = null);
+    Task<Either<string, KeysetPagingResult<FilmDto, long>>> GetFilmsAsync(FilmFilterRequest filter, SortOptions? sort = null);
     Task<Either<string, FilmDto>> CreateFilmAsync(FilmCreateDto dto);
     Task<Either<string, FilmDto>> UpdateFilmAsync(long id, FilmUpdateDto dto);
     Task<Either<string, bool>> DeleteFilmAsync(long id);
+    Task<Either<string, KeysetPagingResult<FilmDto, long>>> GetFilmsByCategoryAsync(long categoryId, KeysetPagingRequest paging);
+    Task<Either<string, List<FilmDto>>> GetLatestFilmsByCategoryAsync(long categoryId, int count = 6);
 }

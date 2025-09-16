@@ -1,6 +1,6 @@
 ﻿namespace Filmify.UI.Models;
 
-public class KeysetPagingResult<T>
+public class KeysetPagingResultViewModel<T>
 {
     public List<T> Items { get; set; } = new List<T>();
     public bool HasNextPage { get; set; }

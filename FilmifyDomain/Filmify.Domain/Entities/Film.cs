@@ -17,14 +17,19 @@ public class Film : BaseEntity
     public string? FileUrl { get; set; }
     public int LikeCount { get; set; } = 0;
     public int ViewCount { get; set; } = 0;
-
+    public float? FilmScore { get; set; } = 0;
+    public long CategoryId { get; set; }
     public string? JsonLD { get; set; }              
 
     public Guid RegisteringUserID { get; set; }      
     public Guid? ApprovalUserID { get; set; }        
-    public DateTime? ApprovalDate { get; set; }     
+    public DateTime? ApprovalDate { get; set; }
 
+    public DateTime? ReleaseDate { get; set; }
+    public int? ProductionYear => ReleaseDate?.Year;
     // 
     public ICollection<FilmBox> FilmBoxes { get; set; } = new List<FilmBox>();
     public ICollection<FilmTag> FilmTags { get; set; } = new List<FilmTag>();
+    public Category Category { get; set; } = null!;
+
 }

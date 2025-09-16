@@ -21,7 +21,9 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
         var dto = mapper.Map<FilmDto>(film);
         return Either<string, FilmDto>.Success(dto);
     }
-    public async Task<Either<string, KeysetPagingResult<FilmDto>>> GetFilmsAsync(FilmFilterRequest filter, SortOptions? sort = null)
+    public async Task<Either<string, KeysetPagingResult<FilmDto, long>>> GetFilmsAsync(
+     FilmFilterRequest filter,
+     SortOptions? sort = null)
     {
         var query = unitOfWork.Films.QueryWithRelations();
 
@@ -47,12 +49,18 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
         var pagedResult = await pagingService.ToHybridPageAsync(query, keySelector, filter);
 
+        // Map to DTO after paging
         var dtoResult = pagedResult.Items.Select(f => mapper.Map<FilmDto>(f)).ToList();
 
-        return Either<string, KeysetPagingResult<FilmDto>>.Success(
-            new KeysetPagingResult<FilmDto>(dtoResult, pagedResult.HasNextPage)
+        var result = new KeysetPagingResult<FilmDto, long>(
+            dtoResult,
+            pagedResult.HasNextPage,
+            pagedResult.LastKey
         );
+
+        return Either<string, KeysetPagingResult<FilmDto, long>>.Success(result);
     }
+
     public async Task<Either<string, FilmDto>> CreateFilmAsync(FilmCreateDto dto)
     {
         if (await unitOfWork.Films.CheckDuplicateTitleAsync(dto.FilmTitle))
@@ -60,7 +68,7 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
         var film = mapper.Map<Film>(dto);
 
-   
+
         if (dto.BoxIds != null)
             film.FilmBoxes = dto.BoxIds.Select(id => new FilmBox { BoxId = id }).ToList();
 
@@ -86,20 +94,20 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
            await unitOfWork.Films.CheckDuplicateTitleAsync(dto.FilmTitle))
             return Either<string, FilmDto>.Fail("Film with the same title already exists");
 
-        // 3️⃣ مپ فیلدهای ساده
+
         mapper.Map(dto, film);
 
-       
+
         if (dto.BoxIds != null)
         {
             var newBoxIds = new HashSet<long>(dto.BoxIds);
             var existingBoxIds = new HashSet<long>(film.FilmBoxes.Select(fb => fb.BoxId));
 
-            
+
             var toRemove = film.FilmBoxes.Where(fb => !newBoxIds.Contains(fb.BoxId)).ToList();
             foreach (var r in toRemove) film.FilmBoxes.Remove(r);
 
-           
+
             var toAdd = newBoxIds.Except(existingBoxIds)
                 .Select(bid => new FilmBox { FilmId = film.FilmId, BoxId = bid });
             foreach (var a in toAdd) film.FilmBoxes.Add(a);
@@ -114,17 +122,17 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
             var toRemove = film.FilmTags.Where(ft => !newTagIds.Contains(ft.TagId)).ToList();
             foreach (var r in toRemove) film.FilmTags.Remove(r);
 
-           
+
             var toAdd = newTagIds.Except(existingTagIds)
                 .Select(tid => new FilmTag { FilmId = film.FilmId, TagId = tid });
             foreach (var a in toAdd) film.FilmTags.Add(a);
         }
 
-      
+
         await unitOfWork.Films.UpdateAsync(film);
         await unitOfWork.CommitAsync();
 
-       
+
         film = await unitOfWork.Films.GetFilmWithRelationsAsync(film.FilmId);
 
         var filmDto = mapper.Map<FilmDto>(film);
@@ -143,4 +151,80 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
         return Either<string, bool>.Success(true);
     }
+    public async Task<Either<string, KeysetPagingResult<FilmDto, long>>> GetFilmsByCategoryAsync(
+       long categoryId,
+       KeysetPagingRequest paging)
+    {
+        // Query روی موجودیت اصلی
+        var query = unitOfWork.Films.QueryWithRelations()
+            .Where(f => f.CategoryId == categoryId)
+            .OrderByDescending(f => f.RegDate);
+
+        // اجرای پیجینگ
+        var pagedResult = await pagingService.ToHybridPageAsync(query, f => f.FilmId, paging);
+
+        // مپ کردن به DTO بعد از پیجینگ
+        var dtoResult = pagedResult.Items.Select(f => new FilmDto
+        {
+            FilmId = f.FilmId,
+            FilmTitle = f.FilmTitle,
+            CoverImage = f.CoverImage,
+            RegDate = f.RegDate,
+            CategoryName = f.Category.Name,
+            LikeCount = f.LikeCount,
+            ViewCount = f.ViewCount,
+            FilmScore = f.FilmScore,
+            Tags = f.FilmTags.Select(ft => ft.Tag.TagText).ToList()
+        }).ToList();
+
+        // ساخت KeysetPagingResult با LastKey
+        var result = new KeysetPagingResult<FilmDto, long>(
+            dtoResult,
+            pagedResult.HasNextPage,
+            pagedResult.LastKey
+        );
+
+        return Either<string, KeysetPagingResult<FilmDto, long>>.Success(result);
+    }
+    public async Task<Either<string, List<FilmDto>>> GetLatestFilmsByCategoryAsync(long categoryId, int count = 6)
+    {
+        try
+        {
+            var query = unitOfWork.Films.QueryWithRelations()
+                .Where(f => f.CategoryId == categoryId)
+                .OrderByDescending(f => f.ReleaseDate)
+                .Take(count);
+
+            var films = unitOfWork.Films.QueryWithRelations()
+                     .Where(f => f.CategoryId == categoryId)
+                     .OrderByDescending(f => f.ReleaseDate)
+                     .Take(6)
+                     .AsEnumerable() 
+                     .Select(f => new FilmDto
+                     {
+                         FilmId = f.FilmId,
+                         FilmTitle = f.FilmTitle,
+                         CoverImage = f.CoverImage,
+                         RegDate = f.RegDate,
+                         CategoryName = f.Category.Name,
+                         LikeCount = f.LikeCount,
+                         ViewCount = f.ViewCount,
+                         ReleaseYear = f.ReleaseDate?.Year
+                     })
+                     .ToList(); 
+
+
+
+
+
+            return Either<string, List<FilmDto>>.Success(films);
+        }
+        catch (Exception ex)
+        {
+            return Either<string, List<FilmDto>>.Fail($"Error: {ex.Message}");
+        }
+    }
+
+
+
 }

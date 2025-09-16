@@ -5,6 +5,17 @@ namespace Filmify.Infrastructure.Persistence.Seed;
 
 public static class SeedData
 {
+    public static List<Category> GetCategories()
+    {
+              return new List<Category>
+          {
+              new Category { Name = "Classic" },
+              new Category { Name = "Action" },
+              new Category { Name = "Comedy" },
+              new Category { Name = "Drama" }
+          };
+    }
+
     public static List<Box> GetBoxes()
     {
         return new List<Box>
@@ -22,18 +33,22 @@ public static class SeedData
             new Tag { TagText = "Popular", RegisteringUserID = Guid.NewGuid() },
             new Tag { TagText = "New Release", RegisteringUserID = Guid.NewGuid() },
             new Tag { TagText = "Classic", RegisteringUserID = Guid.NewGuid() },
+            new Tag { TagText = "Drama", RegisteringUserID = Guid.NewGuid() },
         };
     }
 
-    public static List<Film> GetFilms(List<Box> boxes, List<Tag> tags)
+    public static List<Film> GetFilms(List<Box> boxes, List<Tag> tags, List<Category> categories)
     {
         var film1 = new Film
         {
             FilmTitle = "The First Adventure",
             Duration = new Duration(120, 0),
-            CoverImage = "cover1.jpg",
+            CoverImage = "cover.jpg",
             FileUrl = "film1.mp4",
             RegisteringUserID = Guid.NewGuid(),
+            Category = categories.First(c => c.Name == "Action"),
+            FilmScore = 7
+
         };
 
         // Attach Boxes
@@ -51,7 +66,27 @@ public static class SeedData
             CoverImage = "cover2.jpg",
             FileUrl = "film2.mp4",
             RegisteringUserID = Guid.NewGuid(),
+            Category = categories.First(c => c.Name == "Comedy"),
+            FilmScore = 8
         };
+
+
+        film2.FilmBoxes.Add(new FilmBox { Film = film2, Box = boxes[1], SortOrder = 1 });
+        film2.FilmTags.Add(new FilmTag { Film = film2, Tag = tags[1] });
+        film2.FilmTags.Add(new FilmTag { Film = film2, Tag = tags[2] });
+
+
+        var film3 = new Film
+        {
+            FilmTitle = "God father",
+            Duration = new Duration(90, 30),
+            CoverImage = "cover3.jpg",
+            FileUrl = "film2.mp4",
+            RegisteringUserID = Guid.NewGuid(),
+            Category = categories.First(c => c.Name == "Drama"),
+            FilmScore = 9
+        };
+
 
         film2.FilmBoxes.Add(new FilmBox { Film = film2, Box = boxes[1], SortOrder = 1 });
         film2.FilmTags.Add(new FilmTag { Film = film2, Tag = tags[1] });

@@ -10,14 +10,15 @@ public class UnitOfWork(FilmifyDbContext dbContext) : IUnitOfWork
     private IFilmRepository? _films;
     private IBoxRepository? _boxes;
     private ITagRepository? _tags;
-
+    private ICategoryRepository? _categories;
 
     // Lazy Initialization برای Repositoryها
     public IFilmRepository Films => _films ??= new FilmRepository(dbContext);
     public IBoxRepository Boxes => _boxes ??= new BoxRepository(dbContext);
     public ITagRepository Tags => _tags ??= new TagRepository(dbContext);
+    public ICategoryRepository Categories => _categories ??= new CategoryRepository(dbContext);
 
-    // Commit تغییرات
+    // Commit 
     public async Task<int> CommitAsync() => await dbContext.SaveChangesAsync();
 
     // IDisposable
