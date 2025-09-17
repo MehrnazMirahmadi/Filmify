@@ -155,15 +155,15 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
        long categoryId,
        KeysetPagingRequest paging)
     {
-        // Query روی موجودیت اصلی
+
         var query = unitOfWork.Films.QueryWithRelations()
             .Where(f => f.CategoryId == categoryId)
             .OrderByDescending(f => f.RegDate);
 
-        // اجرای پیجینگ
+
         var pagedResult = await pagingService.ToHybridPageAsync(query, f => f.FilmId, paging);
 
-        // مپ کردن به DTO بعد از پیجینگ
+
         var dtoResult = pagedResult.Items.Select(f => new FilmDto
         {
             FilmId = f.FilmId,
@@ -177,7 +177,7 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
             Tags = f.FilmTags.Select(ft => ft.Tag.TagText).ToList()
         }).ToList();
 
-        // ساخت KeysetPagingResult با LastKey
+
         var result = new KeysetPagingResult<FilmDto, long>(
             dtoResult,
             pagedResult.HasNextPage,
@@ -199,7 +199,7 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
                      .Where(f => f.CategoryId == categoryId)
                      .OrderByDescending(f => f.ReleaseDate)
                      .Take(6)
-                     .AsEnumerable() 
+                     .AsEnumerable()
                      .Select(f => new FilmDto
                      {
                          FilmId = f.FilmId,
@@ -211,7 +211,7 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
                          ViewCount = f.ViewCount,
                          ReleaseYear = f.ReleaseDate?.Year
                      })
-                     .ToList(); 
+                     .ToList();
 
 
 
@@ -225,6 +225,39 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
         }
     }
 
+    public async Task<KeysetPagingResult<FilmDto, long>> SearchFilmsAsync(FilmSearchRequest request)
+    {
+       
+        var films = await unitOfWork.Films.SearchAsync(
+            key: request.SearchText,
+            page: request.PageNumber ?? 1,
+            pageSize: request.PageSize + 1 
+        );
 
+    
+        var filmDtos = films
+            .Select(f => new FilmDto
+            {
+                FilmId = f.FilmId,
+                FilmTitle = f.FilmTitle,
+                CategoryName = f.Category?.Name,
+                Tags = f.FilmTags?.Select(ft => ft.Tag.TagText).ToList(),
+                CoverImage = f.CoverImage,
+                RegDate = f.RegDate,
+                LikeCount = f.LikeCount,
+                ViewCount = f.ViewCount,
+                FilmScore = f.FilmScore,
+           
+            })
+            .ToList();
+
+        bool hasNext = filmDtos.Count > request.PageSize;
+        if (hasNext) filmDtos.RemoveAt(filmDtos.Count - 1);
+
+        long lastKey = filmDtos.Any() ? filmDtos.Last().FilmId : 0;
+
+    
+        return new KeysetPagingResult<FilmDto, long>(filmDtos, hasNext, lastKey);
+    }
 
 }

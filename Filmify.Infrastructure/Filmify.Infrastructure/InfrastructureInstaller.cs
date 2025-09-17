@@ -32,7 +32,8 @@ public static class InfrastructureInstaller
         services.AddScoped<IFilmRepository, FilmRepository>();
         services.AddScoped<ITagRepository, TagRepository>();
         services.AddScoped<IBoxRepository, BoxRepository>();
-      
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+
         // Add other repositories here (Box, Tag, etc.)
 
         // --- UnitOfWork

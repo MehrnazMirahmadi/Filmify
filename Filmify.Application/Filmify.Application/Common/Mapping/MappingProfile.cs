@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Filmify.Application.DTOs.Box;
+using Filmify.Application.DTOs.Category;
 using Filmify.Application.DTOs.Film;
 using Filmify.Application.DTOs.Tag;
 using Filmify.Domain.Entities;
@@ -20,10 +21,10 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.FilmBoxes, opt => opt.Ignore());
 
         CreateMap<FilmUpdateDto, Film>()
-    .ForMember(dest => dest.FilmTags, opt => opt.Ignore())  
-    .ForMember(dest => dest.FilmBoxes, opt => opt.Ignore()) 
-    .ForMember(dest => dest.FilmId, opt => opt.Ignore());   
-
+             .ForMember(dest => dest.FilmTags, opt => opt.Ignore())  
+             .ForMember(dest => dest.FilmBoxes, opt => opt.Ignore()) 
+             .ForMember(dest => dest.FilmId, opt => opt.Ignore());   
+        CreateMap<Category, CategoryDto>();
 
         CreateMap<Box, BoxDto>();
         CreateMap<Tag, TagDto>();

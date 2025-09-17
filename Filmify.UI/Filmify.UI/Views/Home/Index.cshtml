@@ -1,2 +1,9 @@
 ﻿
     @await Component.InvokeAsync("FilmsByCategory", new { categoryId = (long)2 })
+    @* @await Component.InvokeAsync("LatestFilms", new { categoryId =(long) 2, count = 6 }) *@
+   @await Component.InvokeAsync("FilmsByCategories",new { categoryId =(long) 2, count = 6 })
+
+
+    
+
+

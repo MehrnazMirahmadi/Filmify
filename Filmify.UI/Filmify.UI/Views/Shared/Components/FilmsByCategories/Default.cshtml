@@ -1,0 +1,114 @@
+﻿@model List<CategoryWithFilmsViewModel>
+
+<section class="content">
+    <div class="content__head">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="content__title">New items</h2>
+
+                    <!-- تب‌های دسکتاپ -->
+                    <ul class="nav nav-tabs content__tabs" id="content__tabs" role="tablist">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var cat = Model[i];
+                            <li class="nav-item">
+                                <a class="nav-link @(i == 0 ? "active" : "")"
+                                   id="tab-@cat.CategoryId-tab"
+                                   data-toggle="tab"
+                                   href="#tab-@cat.CategoryId"
+                                   role="tab"
+                                   aria-controls="tab-@cat.CategoryId"
+                                   aria-selected="@(i == 0 ? "true" : "false")">
+                                    @cat.CategoryName
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- تب‌های موبایل -->
+                    <div class="content__mobile-tabs" id="content__mobile-tabs">
+                        <div class="content__mobile-tabs-btn dropdown-toggle" role="navigation"
+                             id="mobile-tabs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <input type="button" value="New items">
+                            <span></span>
+                        </div>
+                        <div class="content__mobile-tabs-menu dropdown-menu" aria-labelledby="mobile-tabs">
+                            <ul class="nav nav-tabs" role="tablist">
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    var cat = Model[i];
+                                    <li class="nav-item" data-value="@cat.CategoryName.ToLower()">
+                                        <a class="nav-link @(i == 0 ? "active" : "")"
+                                           id="@cat.CategoryId-tab"
+                                           data-toggle="tab"
+                                           href="#tab-@cat.CategoryId"
+                                           role="tab"
+                                           aria-controls="tab-@cat.CategoryId"
+                                           aria-selected="@(i == 0 ? "true" : "false")">
+                                            @cat.CategoryName
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- پایان تب‌های موبایل -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- محتوای تب‌ها -->
+        <div class="tab-content" id="myTabContent">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var cat = Model[i];
+                <div class="tab-pane fade @(i == 0 ? "show active" : "")"
+                     id="tab-@cat.CategoryId"
+                     role="tabpanel"
+                     aria-labelledby="tab-@cat.CategoryId-tab">
+
+                    <div class="row">
+                        @foreach (var film in cat.Films)
+                        {
+                            <div class="col-6 col-sm-12 col-lg-6">
+                                <div class="card card--list">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-4">
+                                            <div class="card__cover">
+                                                <img src="~/img/covers/@film.CoverImage" alt="@film.FilmTitle" />
+                                                <a href="#" class="card__play">
+                                                    <i class="icon ion-ios-play"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-8">
+                                            <div class="card__content">
+                                                <h3 class="card__title">@film.FilmTitle</h3>
+                                                <span class="card__category">@film.CategoryName</span>
+                                                <div class="card__wrap">
+                                                    <span class="card__rate"><i class="icon ion-ios-star"></i>@film.FilmScore</span>
+                                                    <ul class="card__list">
+                                                        <li>HD</li>
+                                                        <li>16+</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card__description">
+                                                    @* <p>@film.Description</p> *@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            }
+        </div>
+        <!-- پایان محتوای تب‌ها -->
+    </div>
+</section>

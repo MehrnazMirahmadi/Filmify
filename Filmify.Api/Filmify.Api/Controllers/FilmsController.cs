@@ -2,6 +2,7 @@
 using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
 using Filmify.Application.DTOs.Film;
+using Filmify.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmify.Api.Controllers;
@@ -86,5 +87,21 @@ public class FilmsController(IFilmService filmService) : ControllerBase
         else
             return NotFound(new { Message = result.Left });
     }
-  
+
+    [HttpGet("category/latest/{categoryId:long}")]
+    public async Task<IActionResult> GetLatestFilmsByCategory(long categoryId)
+    {
+        var result = await filmService.GetLatestFilmsByCategoryAsync(categoryId, 6);
+
+        if (result.IsRight)
+            return Ok(result.Right); 
+        else
+            return NotFound(new { Message = result.Left });
+    }
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] FilmSearchRequest request)
+    {
+        var result = await filmService.SearchFilmsAsync(request);
+        return Ok(result);
+    }
 }

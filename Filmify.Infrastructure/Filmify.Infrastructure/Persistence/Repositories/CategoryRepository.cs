@@ -6,7 +6,5 @@ namespace Filmify.Infrastructure.Persistence.Repositories;
 
 public class CategoryRepository(FilmifyDbContext db) : Repository<Category>(db), ICategoryRepository
 {
-    //public CategoryRepository(FilmifyDbContext db) : base(db)
-    //{
-    //}
+   
 }

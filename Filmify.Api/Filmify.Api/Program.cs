@@ -1,4 +1,4 @@
-using Filmify.Application;
+﻿using Filmify.Application;
 using Filmify.Infrastructure;
 using Filmify.Infrastructure.Persistence.Context;
 using Filmify.Infrastructure.Persistence.Seed;
@@ -12,7 +12,15 @@ builder.Services.AddSwaggerGen();
 builder.Services
     .AddInfrastructureServices(builder.Configuration)
     .AddApplicationServices();
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("https://localhost:7239") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 
 // --- Middleware
@@ -27,6 +35,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();

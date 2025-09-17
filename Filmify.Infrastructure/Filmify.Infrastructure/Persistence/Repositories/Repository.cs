@@ -4,17 +4,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Filmify.Infrastructure.Persistence.Repositories;
 
-public class Repository<T>(FilmifyDbContext filmifyDb) : IRepository<T> where T : class
+public class Repository<T> : IRepository<T> where T : class
 {
-    // DbSet مستقیماً از constructor init می‌شود
-    protected readonly DbSet<T> _dbSet = filmifyDb.Set<T>();
+    protected readonly FilmifyDbContext _dbContext;
+    protected readonly DbSet<T> _dbSet;
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    public Repository(FilmifyDbContext dbContext)
     {
-        return await _dbSet.AsNoTracking().ToListAsync();
+        _dbContext = dbContext;
+        _dbSet = _dbContext.Set<T>();
     }
 
-    public virtual async Task<T> GetByIdAsync(long id)
+    public virtual IQueryable<T> GetAll()
+    {
+        return _dbSet.AsNoTracking();
+    }
+
+    public virtual async Task<T?> GetByIdAsync(long id)
     {
         return await _dbSet.FindAsync(id);
     }
@@ -36,6 +42,7 @@ public class Repository<T>(FilmifyDbContext filmifyDb) : IRepository<T> where T 
         if (entity != null)
             _dbSet.Remove(entity);
     }
+
     public virtual IQueryable<T> Query()
     {
         return _dbSet.AsQueryable();
