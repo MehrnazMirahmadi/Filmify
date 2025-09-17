@@ -1,94 +1,31 @@
 ﻿@model Filmify.UI.Models.KeysetPagingResultViewModel<Filmify.Application.DTOs.Film.FilmDto>
 
-
-
 <form class="header__search">
     <div class="container">
         <div class="row">
             <div class="col-12">
                 <div class="header__search-content">
                     <input id="filmSearchInput" type="text" placeholder="Search for a movie, TV Series that you are looking for">
-                    <button type="button" id="filmSearchBtn">Search</button>
                 </div>
             </div>
         </div>
     </div>
 </form>
-<!-- end header search -->
-
 
 <div id="filmResults" class="film-search"></div>
-
-<!--  Load More -->
 <button id="loadMoreBtn" style="display:none;">Load More</button>
 
-<!-- JS -->
-<script>
-    const searchInput = document.getElementById('filmSearchInput');
-    const searchBtn = document.getElementById('filmSearchBtn');
-    const resultsDiv = document.getElementById('filmResults');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
+<script type="module">
+    import { FilmSearch } from '/js/filmSearch.js';
 
-    let lastKey = null;
-    let currentSearch = '';
-    const pageSize = 10; 
+    const filmSearch = new FilmSearch(
+        'filmSearchInput',
+        'filmResults',
+        'loadMoreBtn',
+        'https://localhost:7053', // Base API URL
+        10 // pageSize
+    );
 
-    // جستجوی جدید
-    searchBtn.addEventListener('click', () => {
-        currentSearch = searchInput.value;
-        lastKey = null;
-        fetchFilms();
-    });
-
-    // Load More
-    loadMoreBtn.addEventListener('click', () => {
-        fetchFilms();
-    });
-
-    async function fetchFilms() {
-        const apiBaseUrl = "https://localhost:7053"; //  API
-const url = `${apiBaseUrl}/api/films/search?searchText=${encodeURIComponent(currentSearch)}&pageSize=${pageSize}&lastKey=${lastKey || ''}`;
-const res = await fetch(url);
-
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-            const data = await res.json();
-
-            renderFilms(data);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    function renderFilms(data) {
-        if (!data || !data.items) return;
-
-      
-        if (!lastKey) resultsDiv.innerHTML = '';
-
-        data.items.forEach(film => {
-            const filmDiv = document.createElement('div');
-            filmDiv.classList.add('film-item');
-            filmDiv.innerHTML = `
-                <img src="/imgs/covers/${film.coverImage}" alt="${film.filmTitle}" />
-                <h3>${film.filmTitle}</h3>
-                <p>Category: ${film.categoryName}</p>
-                <p>Tags: ${film.tags ? film.tags.join(', ') : ''}</p>
-            `;
-            resultsDiv.appendChild(filmDiv);
-        });
-
-        //  Load More
-        if (data.hasNextPage) {
-            lastKey = data.lastKey;
-            loadMoreBtn.style.display = 'block';
-        } else {
-            lastKey = null;
-            loadMoreBtn.style.display = 'none';
-        }
-    }
-
-    // 
-    fetchFilms();
+    // Initial load
+    filmSearch.fetchFilms();
 </script>
