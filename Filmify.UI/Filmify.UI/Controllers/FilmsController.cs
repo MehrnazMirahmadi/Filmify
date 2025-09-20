@@ -18,12 +18,18 @@ public class FilmsController(FilmApiClient api) : Controller
         if (film == null) return NotFound();
         return View(film);
     }
-    //public async Task<IActionResult> ByCategory(long categoryId, [FromQuery] KeysetPagingRequest paging)
-    //{
-    //    var films = await api.GetFilmsByCategoryIdAsync(categoryId, paging);
-    //    return View(films);
-    //}
 
+    public async Task<IActionResult> Search(string searchText, string lastKey = "")
+    {
+        var paging = new KeysetPagingRequest
+        {
+            PageSize = 10,
+            LastKey = lastKey
+        };
 
+        var result = await api.SearchFilmsAsync(searchText, paging);
+
+        return PartialView("_FilmSearchResults", result);
+    }
 
 }

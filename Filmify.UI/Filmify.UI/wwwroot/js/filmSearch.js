@@ -1,69 +1,40 @@
-﻿// filmSearch.js
+﻿document.addEventListener('DOMContentLoaded', () => {
+    const searchBtn = document.getElementById('filmSearchBtn');
+    const searchInput = document.getElementById('filmSearchInput');
+    const resultsContainer = document.getElementById('filmResultsContainer');
+    let lastKey = 0;
+    let currentSearch = '';
+ 
+    function fetchResults() {
+        fetch(`/Films/Search?searchText=${encodeURIComponent(currentSearch)}&lastKey=${lastKey}`)
+            .then(res => res.text())
+            .then(html => {
+                if (lastKey === 0) resultsContainer.innerHTML = '';
+                resultsContainer.insertAdjacentHTML('beforeend', html);
 
-export class FilmSearch {
-    constructor(inputId, resultsId, loadMoreId, apiBaseUrl, pageSize = 10) {
-        this.searchInput = document.getElementById(inputId);
-        this.resultsDiv = document.getElementById(resultsId);
-        this.loadMoreBtn = document.getElementById(loadMoreId);
-
-        this.apiBaseUrl = apiBaseUrl;
-        this.pageSize = pageSize;
-
-        this.lastKey = null;
-        this.currentSearch = '';
-        this.debounceTimer = null;
-
-        this.init();
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                if (loadMoreBtn) {
+                    lastKey = loadMoreBtn.dataset.lastKey;
+                    loadMoreBtn.addEventListener('click', () => {
+                        fetchResults();
+                    });
+                }
+            });
+       
     }
 
-    init() {
-        // Live search
-        this.searchInput.addEventListener('keyup', (e) => {
-            this.currentSearch = e.target.value;
-            this.lastKey = null;
-            clearTimeout(this.debounceTimer);
-            this.debounceTimer = setTimeout(() => this.fetchFilms(), 300);
-        });
+    searchBtn.addEventListener('click', () => {
+        currentSearch = searchInput.value.trim();
+        lastKey = 0;
+        fetchResults();
+    });
 
-        // Load More
-        this.loadMoreBtn.addEventListener('click', () => this.fetchFilms());
-    }
+    // optional: live search
+    searchInput.addEventListener('keyup', (e) => {
+        currentSearch = e.target.value.trim();
+        lastKey = 0;
+        fetchResults();
+    });
 
-    async fetchFilms() {
-        const url = `${this.apiBaseUrl}/api/films/search?searchText=${encodeURIComponent(this.currentSearch)}&pageSize=${this.pageSize}&lastKey=${this.lastKey || ''}`;
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-            const data = await res.json();
-            this.renderFilms(data);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    renderFilms(data) {
-        if (!data || !data.items) return;
-
-        if (!this.lastKey) this.resultsDiv.innerHTML = '';
-
-        data.items.forEach(film => {
-            const filmDiv = document.createElement('div');
-            filmDiv.classList.add('film-item');
-            filmDiv.innerHTML = `
-                <img src="/imgs/covers/${film.coverImage}" alt="${film.filmTitle}" />
-                <h3>${film.filmTitle}</h3>
-                <p>Category: ${film.categoryName}</p>
-                <p>Tags: ${film.tags ? film.tags.join(', ') : ''}</p>
-            `;
-            this.resultsDiv.appendChild(filmDiv);
-        });
-
-        if (data.hasNextPage) {
-            this.lastKey = data.lastKey;
-            this.loadMoreBtn.style.display = 'block';
-        } else {
-            this.lastKey = null;
-            this.loadMoreBtn.style.display = 'none';
-        }
-    }
-}
+ 
+});

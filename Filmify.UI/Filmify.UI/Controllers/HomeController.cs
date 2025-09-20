@@ -1,21 +1,29 @@
+using Filmify.Application.Common.Paging;
 using Filmify.UI.Models;
+using Filmify.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Filmify.UI.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(FilmApiClient api) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
 
-        public IActionResult Index()
+        //public IActionResult Index()
+        //{
+        //    return View();
+        //}
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var paging = new KeysetPagingRequest { PageSize = 10, LastKey = "0"};
+            var films = await api.SearchFilmsAsync("", paging); 
+            return View(films);
         }
 
 

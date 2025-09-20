@@ -1,0 +1,43 @@
+﻿@model Filmify.UI.Models.KeysetPagingResultViewModel<Filmify.Application.DTOs.Film.FilmDto>
+
+            @foreach (var film in Model.Items)
+            {
+                <div class="col-6 col-sm-4 col-lg-3 col-xl-2 mb-4">
+                    <div class="card">
+                        <div class="card__cover">
+                         
+                            <a href="@Url.Action("Details", "Films", new { id = film.FilmId })" class="card__play">
+                                <i class="icon ion-ios-play"></i>
+                            </a>
+                        </div>
+                        <div class="card__content">
+                            <h3 class="card__title">
+                                <a href="@Url.Action("Details", "Films", new { id = film.FilmId })">@film.FilmTitle</a>
+                            </h3>
+                            <span class="card__category">
+                                @if (!string.IsNullOrEmpty(film.CategoryName))
+                                {
+                                    <a href="#">@film.CategoryName</a>
+                                }
+                                @if (film.Tags != null)
+                                {
+                                    @foreach (var tag in film.Tags)
+                                    {
+                                        <a href="#">@tag</a>
+                                    }
+                                }
+                            </span>
+                            <span class="card__rate">
+                                <i class="icon ion-ios-star"></i>@(film.FilmScore?.ToString("0.0") ?? "N/A")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <div class="col-12 text-center mt-4">
+                    <button id="loadMoreBtn" data-last-key="@Model.LastKey" class="section__btn">Load More</button>
+                </div>
+            }

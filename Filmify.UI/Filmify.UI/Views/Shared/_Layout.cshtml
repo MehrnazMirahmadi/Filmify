@@ -16,15 +16,31 @@
 	<partial name="_Header" />
 	</header>
      <section class="home">
-           <div class="container">
-             
-          
+           <div class="container">              
                 @RenderBody()
-              
             </div>
       </section>
 	<!--Footer-->
+    <div id="filmResultsContainer">
+    
+    </div>
       <partial name="_FooterRefrences" />
     @await RenderSectionAsync("Scripts", required: false)
+  <script src="~/js/filmSearch.js"></script>
+  
+@section Scripts {
+    <script type="module">
+        import { FilmSearch } from '/js/filmSearch.js';
+
+        new FilmSearch(
+            'filmSearchInput',
+            'filmResultsContainer',
+            'loadMoreBtn',
+             'https://localhost:7053',
+            10
+        );
+    </script>
+}
+
 </body>
 </html>
