@@ -13,12 +13,14 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
     {
         return await _dbSet.AnyAsync(f => f.FilmTitle == title);
     }
+    // ریپوزیتوری (infra)
     public async Task<IEnumerable<Film>> SearchAsync(string? key, int page = 1, int pageSize = 10)
     {
+        if (page < 1) page = 1;
+
         var query = _dbSet
-            .Include(f => f.Category)              
-            .Include(f => f.FilmTags)             
-                .ThenInclude(ft => ft.Tag)        
+            .Include(f => f.Category)
+            .Include(f => f.FilmTags).ThenInclude(ft => ft.Tag)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(key))
@@ -39,6 +41,9 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
             .ToListAsync();
     }
 
+    // فقط آیتم‌ها را برگردونید، TotalCount را سرویس محاسبه کند
+
+
     public async Task<Film?> GetFilmWithRelationsAsync(long id)
     {
         return await db.Films
@@ -55,5 +60,19 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
        .Include(f => f.FilmTags).ThenInclude(ft => ft.Tag);
     }
 
- 
+    public async Task<int> CountAsync(string? key)
+    {
+        var query = QueryWithRelations();
+
+        if (!string.IsNullOrEmpty(key))
+        {
+            query = query.Where(f =>
+                f.FilmTitle.Contains(key) ||
+                f.FilmTags.Any(ft => ft.Tag.TagText.Contains(key)) ||
+                f.Category.Name.Contains(key));
+        }
+
+        return await query.CountAsync();
+    }
+
 }

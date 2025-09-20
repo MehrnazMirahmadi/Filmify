@@ -1,8 +1,9 @@
 ﻿@model Filmify.UI.Models.KeysetPagingResultViewModel<Filmify.Application.DTOs.Film.FilmDto>
 
-
+<div class="container">  
   @await Component.InvokeAsync("FilmsByCategory", new { categoryId = (long)2 })
-    @* @await Component.InvokeAsync("LatestFilms", new { categoryId =(long) 2, count = 6 }) *@
+</div>
+   
   @await Component.InvokeAsync("FilmsByCategories",new { categoryId =(long) 2, count = 6 })
 
 
@@ -14,10 +15,11 @@
                 <h2 class="section__title">Expected premiere</h2>
             </div>
         </div>
-        <!-- فیلم‌ها اینجا اضافه میشن -->
+    
         <div class="row" id="filmResultsContainer">
             @await Html.PartialAsync("_FilmSearchResults", Model)
         </div>
+       
     </div>
 </section>
 

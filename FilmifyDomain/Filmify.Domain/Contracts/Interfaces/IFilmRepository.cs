@@ -8,4 +8,5 @@ public interface IFilmRepository : IRepository<Film>
     Task<Film?> GetFilmWithRelationsAsync(long id);
     IQueryable<Film> QueryWithRelations();
     Task<IEnumerable<Film>> SearchAsync(string? key, int page = 1, int pageSize = 10);
+    Task<int> CountAsync(string? key);
 }

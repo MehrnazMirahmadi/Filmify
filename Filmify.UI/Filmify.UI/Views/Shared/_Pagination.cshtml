@@ -1,0 +1,30 @@
+﻿@model Filmify.UI.Models.PaginationViewModel
+
+@if (Model.TotalPages > 1)
+{
+    <div class="col-12">
+        <ul class="paginator">
+            <!-- Prev -->
+            <li class="paginator__item paginator__item--prev @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a href="@Url.Action(Model.ActionName, Model.ControllerName, new { pageNumber = Model.CurrentPage - 1, searchText = Model.Search })">
+                    <i class="icon ion-ios-arrow-back"></i>
+                </a>
+            </li>
+
+            <!-- Pages -->
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="paginator__item @(i == Model.CurrentPage ? "paginator__item--active" : "")">
+                    <a href="@Url.Action(Model.ActionName, Model.ControllerName, new { pageNumber = i, searchText = Model.Search })">@i</a>
+                </li>
+            }
+
+            <!-- Next -->
+            <li class="paginator__item paginator__item--next @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a href="@Url.Action(Model.ActionName, Model.ControllerName, new { pageNumber = Model.CurrentPage + 1, searchText = Model.Search })">
+                    <i class="icon ion-ios-arrow-forward"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+}

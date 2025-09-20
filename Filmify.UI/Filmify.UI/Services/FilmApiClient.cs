@@ -2,13 +2,12 @@
 using Filmify.Application.DTOs.Category;
 using Filmify.Application.DTOs.Film;
 using Filmify.UI.Models;
-using static System.Net.WebRequestMethods;
 
 namespace Filmify.UI.Services;
 
 public class FilmApiClient(HttpClient http)
 {
-   
+
     public async Task<List<FilmDto>> GetFilmsAsync()
     {
         try
@@ -81,7 +80,16 @@ public class FilmApiClient(HttpClient http)
             return new KeysetPagingResultViewModel<FilmDto>();
         }
     }
-  
+
+    public async Task<PagedResult<FilmDto>> GetPagedFilmsAsync(string searchText, int pageNumber, int pageSize)
+    {
+        var query = $"api/films/paged?SearchText={searchText}&PageNumber={pageNumber}&PageSize={pageSize}";
+        var response = await http.GetFromJsonAsync<PagedResult<FilmDto>>(query);
+        return response ?? new PagedResult<FilmDto>();
+    }
+
+
+
 
 }
 

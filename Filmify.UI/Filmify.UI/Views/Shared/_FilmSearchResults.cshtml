@@ -5,6 +5,7 @@
                 <div class="col-6 col-sm-4 col-lg-3 col-xl-2 mb-4">
                     <div class="card">
                         <div class="card__cover">
+                       <img src="~/img/covers/@film.CoverImage" alt="@film.FilmTitle" />
                          
                             <a href="@Url.Action("Details", "Films", new { id = film.FilmId })" class="card__play">
                                 <i class="icon ion-ios-play"></i>

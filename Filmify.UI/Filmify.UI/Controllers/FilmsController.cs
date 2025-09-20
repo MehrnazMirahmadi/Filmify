@@ -1,6 +1,7 @@
 ﻿using Filmify.Application.Common.Paging;
 using Filmify.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Filmify.UI.Controllers;
 
@@ -23,7 +24,7 @@ public class FilmsController(FilmApiClient api) : Controller
     {
         var paging = new KeysetPagingRequest
         {
-            PageSize = 10,
+            PageSize = 6,
             LastKey = lastKey
         };
 
@@ -31,5 +32,12 @@ public class FilmsController(FilmApiClient api) : Controller
 
         return PartialView("_FilmSearchResults", result);
     }
+   
+        public async Task<IActionResult> GetAll(string? searchText, int pageNumber = 1, int pageSize = 6)
+        {
+            var result = await api.GetPagedFilmsAsync(searchText ?? "", pageNumber, pageSize);
+            return View(result);
+        }
+    
 
 }

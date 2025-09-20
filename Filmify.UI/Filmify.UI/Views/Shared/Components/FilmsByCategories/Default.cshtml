@@ -7,7 +7,7 @@
                 <div class="col-12">
                     <h2 class="content__title">New items</h2>
 
-                    <!-- تب‌های دسکتاپ -->
+                    <!-- Desktop tabs  -->
                     <ul class="nav nav-tabs content__tabs" id="content__tabs" role="tablist">
                         @for (int i = 0; i < Model.Count; i++)
                         {
@@ -26,7 +26,7 @@
                         }
                     </ul>
 
-                    <!-- تب‌های موبایل -->
+                    <!--Mobile tabs -->
                     <div class="content__mobile-tabs" id="content__mobile-tabs">
                         <div class="content__mobile-tabs-btn dropdown-toggle" role="navigation"
                              id="mobile-tabs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -53,14 +53,14 @@
                             </ul>
                         </div>
                     </div>
-                    <!-- پایان تب‌های موبایل -->
+                    <!-- End mobile tab -->
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- محتوای تب‌ها -->
+        <!--  -->
         <div class="tab-content" id="myTabContent">
             @for (int i = 0; i < Model.Count; i++)
             {
@@ -109,6 +109,6 @@
                 </div>
             }
         </div>
-        <!-- پایان محتوای تب‌ها -->
+        <!--  -->
     </div>
 </section>

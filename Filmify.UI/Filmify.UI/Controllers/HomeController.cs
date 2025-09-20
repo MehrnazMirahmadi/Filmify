@@ -8,20 +8,10 @@ namespace Filmify.UI.Controllers
 {
     public class HomeController(FilmApiClient api) : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
-
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
-
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+      
         public async Task<IActionResult> Index()
         {
-            var paging = new KeysetPagingRequest { PageSize = 10, LastKey = "0"};
+            var paging = new KeysetPagingRequest { PageSize = 6, LastKey = "0"};
             var films = await api.SearchFilmsAsync("", paging); 
             return View(films);
         }

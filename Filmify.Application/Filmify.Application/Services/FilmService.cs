@@ -259,5 +259,32 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
     
         return new KeysetPagingResult<FilmDto, long>(filmDtos, hasNext, lastKey);
     }
+    public async Task<PagedResult<FilmDto>> GetPagedFilmsAsync(string searchText, int pageNumber, int pageSize)
+    {
+        var films = await unitOfWork.Films.SearchAsync(searchText, pageNumber, pageSize);
+        var totalCount = await unitOfWork.Films.CountAsync(searchText);
+
+        var items = films.Select(f => new FilmDto
+        {
+            FilmId = f.FilmId,
+            FilmTitle = f.FilmTitle,
+            CategoryName = f.Category?.Name,
+            Tags = f.FilmTags.Select(ft => ft.Tag.TagText).ToList(),
+            CoverImage = f.CoverImage,
+            RegDate = f.RegDate,
+            LikeCount = f.LikeCount,
+            ViewCount = f.ViewCount,
+            FilmScore = f.FilmScore
+        }).ToList();
+
+        return new PagedResult<FilmDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
 
 }

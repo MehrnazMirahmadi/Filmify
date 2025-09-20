@@ -10,7 +10,7 @@ namespace Filmify.Api.Controllers;
 [ApiController]
 public class FilmsController(IFilmService filmService) : ControllerBase
 {
-  
+
 
     // GET: api/Film/{id}
     [HttpGet("{id}")]
@@ -94,7 +94,7 @@ public class FilmsController(IFilmService filmService) : ControllerBase
         var result = await filmService.GetLatestFilmsByCategoryAsync(categoryId, 6);
 
         if (result.IsRight)
-            return Ok(result.Right); 
+            return Ok(result.Right);
         else
             return NotFound(new { Message = result.Left });
     }
@@ -102,6 +102,12 @@ public class FilmsController(IFilmService filmService) : ControllerBase
     public async Task<IActionResult> Search([FromQuery] FilmSearchRequest request)
     {
         var result = await filmService.SearchFilmsAsync(request);
+        return Ok(result);
+    }
+    [HttpGet("paged")]
+    public async Task<IActionResult> GetPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 6, [FromQuery] string? searchText = null)
+    {
+        var result = await filmService.GetPagedFilmsAsync(searchText, pageNumber, pageSize);
         return Ok(result);
     }
 }

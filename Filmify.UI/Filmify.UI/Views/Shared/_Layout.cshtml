@@ -16,14 +16,14 @@
 	<partial name="_Header" />
 	</header>
      <section class="home">
-           <div class="container">              
+           @* <div class="container">               *@
                 @RenderBody()
-            </div>
+            @* </div> *@
       </section>
 	<!--Footer-->
-    <div id="filmResultsContainer">
-    
-    </div>
+
+
+     <partial name="_Footer"  />
       <partial name="_FooterRefrences" />
     @await RenderSectionAsync("Scripts", required: false)
   <script src="~/js/filmSearch.js"></script>
