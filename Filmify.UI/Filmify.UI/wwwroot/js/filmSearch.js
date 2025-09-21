@@ -4,7 +4,9 @@
     const resultsContainer = document.getElementById('filmResultsContainer');
     let lastKey = 0;
     let currentSearch = '';
-
+    // Check if we're on the GetAll page
+    const isGetAllPage = window.location.pathname.includes('/Films/GetAll');
+    const isHomePage = window.location.pathname === '/' || window.location.pathname.includes('/Home');
     function fetchResults() {
         fetch(`/Films/Search?searchText=${encodeURIComponent(currentSearch)}&lastKey=${lastKey}`)
             .then(res => res.text())
@@ -21,23 +23,42 @@
                 }
             });
     }
+    function redirectToGetAll() {
+        if (currentSearch.trim()) {
+            window.location.href = `/Films/GetAll?searchText=${encodeURIComponent(currentSearch)}`;
+        } else {
+            window.location.href = '/Films/GetAll';
+        }
+    }
+
 
     searchBtn.addEventListener('click', () => {
         currentSearch = searchInput.value.trim();
         lastKey = 0;
-        fetchResults();
+        if (currentSearch === '') {
+            if (isGetAllPage) {
+                redirectToGetAll();
+            } else {
+                fetchResults();
+            }
+        }
+        else {
+            fetchResults();
+        }
     });
 
     searchInput.addEventListener('keyup', (e) => {
         currentSearch = e.target.value.trim();
         lastKey = 0;
         if (currentSearch === '') {
-           
-            if (window.location.pathname === '/Films/GetAll') {
+            if (isGetAllPage) {
+                redirectToGetAll();
+            } else {
                 fetchResults();
             }
         } else {
             fetchResults();
         }
+        
     });
 });
