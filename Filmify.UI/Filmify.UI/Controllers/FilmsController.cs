@@ -33,7 +33,7 @@ public class FilmsController(FilmApiClient api) : Controller
         return PartialView("_FilmSearchResults", result);
     }
    
-        public async Task<IActionResult> GetAll(string? searchText, int pageNumber = 1, int pageSize = 6)
+        public async Task<IActionResult> GetAll(string? searchText, int pageNumber = 1, int pageSize = 4)
         {
             var result = await api.GetPagedFilmsAsync(searchText ?? "", pageNumber, pageSize);
             return View(result);

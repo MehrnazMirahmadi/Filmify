@@ -7,4 +7,7 @@ public class PaginationViewModel
     public string? Search { get; set; }
     public string ActionName { get; set; } = "";
     public string ControllerName { get; set; } = "";
+
+    public bool HasPreviousPage => CurrentPage > 1;
+    public bool HasNextPage => CurrentPage < TotalPages;
 }

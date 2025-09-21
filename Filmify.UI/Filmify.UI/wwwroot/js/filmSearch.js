@@ -4,7 +4,7 @@
     const resultsContainer = document.getElementById('filmResultsContainer');
     let lastKey = 0;
     let currentSearch = '';
- 
+
     function fetchResults() {
         fetch(`/Films/Search?searchText=${encodeURIComponent(currentSearch)}&lastKey=${lastKey}`)
             .then(res => res.text())
@@ -20,7 +20,6 @@
                     });
                 }
             });
-       
     }
 
     searchBtn.addEventListener('click', () => {
@@ -29,12 +28,16 @@
         fetchResults();
     });
 
-    // optional: live search
     searchInput.addEventListener('keyup', (e) => {
         currentSearch = e.target.value.trim();
         lastKey = 0;
-        fetchResults();
+        if (currentSearch === '') {
+           
+            if (window.location.pathname === '/Films/GetAll') {
+                fetchResults();
+            }
+        } else {
+            fetchResults();
+        }
     });
-
- 
 });
