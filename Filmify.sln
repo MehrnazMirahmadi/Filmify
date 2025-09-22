@@ -23,6 +23,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmify.Application", "Film
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmify.Api", "Filmify.Api\Filmify.Api\Filmify.Api.csproj", "{8CCE8D50-875F-41C1-9BA4-39A48D9AEE4F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityService", "IdentityService", "{75824DE2-8AF7-4E58-8287-7381E5E7A108}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmify.Identity.Domain", "IdentityService\Filmify.Identity.Domain\Filmify.Identity.Domain.csproj", "{4158523B-F551-4346-AC1B-7D2714B22DC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmify.Identity.Application", "IdentityService\Filmify.Identity.Application\Filmify.Identity.Application.csproj", "{2EF5E013-882B-44AF-B8CF-4140908DC1BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmify.Identity.Infrastructure", "IdentityService\Filmify.Identity.Infrastructure\Filmify.Identity.Infrastructure.csproj", "{FF2A6845-7C5D-4863-83A7-8B53B485C275}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filmify.Identity.Api", "IdentityService\Filmify.Identity.Api\Filmify.Identity.Api.csproj", "{70F038FD-7135-4C3E-BEF2-CACDBF2B42AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +59,22 @@ Global
 		{8CCE8D50-875F-41C1-9BA4-39A48D9AEE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CCE8D50-875F-41C1-9BA4-39A48D9AEE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CCE8D50-875F-41C1-9BA4-39A48D9AEE4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4158523B-F551-4346-AC1B-7D2714B22DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4158523B-F551-4346-AC1B-7D2714B22DC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4158523B-F551-4346-AC1B-7D2714B22DC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4158523B-F551-4346-AC1B-7D2714B22DC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EF5E013-882B-44AF-B8CF-4140908DC1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF5E013-882B-44AF-B8CF-4140908DC1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF5E013-882B-44AF-B8CF-4140908DC1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF5E013-882B-44AF-B8CF-4140908DC1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF2A6845-7C5D-4863-83A7-8B53B485C275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF2A6845-7C5D-4863-83A7-8B53B485C275}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF2A6845-7C5D-4863-83A7-8B53B485C275}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF2A6845-7C5D-4863-83A7-8B53B485C275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F038FD-7135-4C3E-BEF2-CACDBF2B42AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70F038FD-7135-4C3E-BEF2-CACDBF2B42AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70F038FD-7135-4C3E-BEF2-CACDBF2B42AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70F038FD-7135-4C3E-BEF2-CACDBF2B42AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +85,10 @@ Global
 		{6ABC8F3F-842A-426B-BDC5-76975CEA8B1F} = {9DCA85FF-27EE-4B76-BDB3-689D718ED086}
 		{F6B03D5D-E08F-4C7B-8FFD-A60B9BC50799} = {A86238CA-A268-481A-911F-F30643B3E6A6}
 		{8CCE8D50-875F-41C1-9BA4-39A48D9AEE4F} = {3368F220-141E-4018-B734-A9CA8838557A}
+		{4158523B-F551-4346-AC1B-7D2714B22DC1} = {75824DE2-8AF7-4E58-8287-7381E5E7A108}
+		{2EF5E013-882B-44AF-B8CF-4140908DC1BC} = {75824DE2-8AF7-4E58-8287-7381E5E7A108}
+		{FF2A6845-7C5D-4863-83A7-8B53B485C275} = {75824DE2-8AF7-4E58-8287-7381E5E7A108}
+		{70F038FD-7135-4C3E-BEF2-CACDBF2B42AB} = {75824DE2-8AF7-4E58-8287-7381E5E7A108}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA9594C6-53E9-4EDE-8C36-288645457C74}

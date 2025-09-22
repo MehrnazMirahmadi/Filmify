@@ -1,7 +1,6 @@
 ﻿using Filmify.Application.Common.Paging;
 using Filmify.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Filmify.UI.Controllers;
 
@@ -32,12 +31,12 @@ public class FilmsController(FilmApiClient api) : Controller
 
         return PartialView("_FilmSearchResults", result);
     }
-   
-        public async Task<IActionResult> GetAll(string? searchText, int pageNumber = 1, int pageSize = 4)
-        {
-            var result = await api.GetPagedFilmsAsync(searchText ?? "", pageNumber, pageSize);
-            return View(result);
-        }
-    
+
+    public async Task<IActionResult> GetAll(string? searchText, int pageNumber = 1, int pageSize = 4)
+    {
+        var result = await api.GetPagedFilmsAsync(searchText ?? "", pageNumber, pageSize);
+        return View(result);
+    }
+
 
 }
