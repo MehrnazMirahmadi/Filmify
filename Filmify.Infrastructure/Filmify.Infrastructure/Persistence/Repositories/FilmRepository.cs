@@ -14,10 +14,34 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
         return await _dbSet.AnyAsync(f => f.FilmTitle == title);
     }
     // ریپوزیتوری (infra)
-    public async Task<IEnumerable<Film>> SearchAsync(string? key, int page = 1, int pageSize = 10)
-    {
-        if (page < 1) page = 1;
+    //public async Task<IEnumerable<Film>> SearchAsync(string? key, int page = 1, int pageSize = 10)
+    //{
+    //    if (page < 1) page = 1;
 
+    //    var query = _dbSet
+    //        .Include(f => f.Category)
+    //        .Include(f => f.FilmTags).ThenInclude(ft => ft.Tag)
+    //        .AsQueryable();
+
+    //    if (!string.IsNullOrEmpty(key))
+    //    {
+    //        query = query.Where(f =>
+    //            f.FilmTitle.Contains(key) ||
+    //            f.FilmTags.Any(ft => ft.Tag.TagText.Contains(key)) ||
+    //            f.Category.Name.Contains(key)
+    //        );
+    //    }
+
+    //    query = query.OrderBy(f => f.FilmTitle);
+
+    //    return await query
+    //        .Skip((page - 1) * pageSize)
+    //        .Take(pageSize)
+    //        .AsNoTracking()
+    //        .ToListAsync();
+    //}
+    public async Task<IEnumerable<Film>> SearchAsync(string? key, long? lastKey, int pageSize = 10)
+    {
         var query = _dbSet
             .Include(f => f.Category)
             .Include(f => f.FilmTags).ThenInclude(ft => ft.Tag)
@@ -32,16 +56,20 @@ public class FilmRepository(FilmifyDbContext db) : Repository<Film>(db), IFilmRe
             );
         }
 
-        query = query.OrderBy(f => f.FilmTitle);
+        query = query.OrderBy(f => f.FilmId);
+
+        
+        if (lastKey.HasValue && lastKey.Value > 0)
+        {
+            query = query.Where(f => f.FilmId > lastKey.Value);
+        }
 
         return await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .Take(pageSize + 1) 
             .AsNoTracking()
             .ToListAsync();
     }
 
-    // فقط آیتم‌ها را برگردونید، TotalCount را سرویس محاسبه کند
 
 
     public async Task<Film?> GetFilmWithRelationsAsync(long id)

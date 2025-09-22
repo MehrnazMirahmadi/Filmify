@@ -227,38 +227,37 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
     public async Task<KeysetPagingResult<FilmDto, long>> SearchFilmsAsync(FilmSearchRequest request)
     {
-       
+        long? lastKey = null;
+        if (!string.IsNullOrEmpty(request.LastKey) && long.TryParse(request.LastKey, out var parsed))
+            lastKey = parsed;
+
         var films = await unitOfWork.Films.SearchAsync(
             key: request.SearchText,
-            page: request.PageNumber ?? 1,
-            pageSize: request.PageSize + 1 
+            lastKey: lastKey,
+            pageSize: request.PageSize
         );
 
-    
-        var filmDtos = films
-            .Select(f => new FilmDto
-            {
-                FilmId = f.FilmId,
-                FilmTitle = f.FilmTitle,
-                CategoryName = f.Category?.Name,
-                Tags = f.FilmTags?.Select(ft => ft.Tag.TagText).ToList(),
-                CoverImage = f.CoverImage,
-                RegDate = f.RegDate,
-                LikeCount = f.LikeCount,
-                ViewCount = f.ViewCount,
-                FilmScore = f.FilmScore,
-           
-            })
-            .ToList();
+        var filmDtos = films.Select(f => new FilmDto
+        {
+            FilmId = f.FilmId,
+            FilmTitle = f.FilmTitle,
+            CategoryName = f.Category?.Name,
+            Tags = f.FilmTags?.Select(ft => ft.Tag.TagText).ToList(),
+            CoverImage = f.CoverImage,
+            RegDate = f.RegDate,
+            LikeCount = f.LikeCount,
+            ViewCount = f.ViewCount,
+            FilmScore = f.FilmScore,
+        }).ToList();
 
         bool hasNext = filmDtos.Count > request.PageSize;
         if (hasNext) filmDtos.RemoveAt(filmDtos.Count - 1);
 
-        long lastKey = filmDtos.Any() ? filmDtos.Last().FilmId : 0;
+        long lastKeyResult = filmDtos.Any() ? filmDtos.Last().FilmId : 0;
 
-    
-        return new KeysetPagingResult<FilmDto, long>(filmDtos, hasNext, lastKey);
+        return new KeysetPagingResult<FilmDto, long>(filmDtos, hasNext, lastKeyResult);
     }
+
     public async Task<PagedResult<FilmDto>> GetPagedFilmsAsync(string searchText, int pageNumber, int pageSize)
     {
         var films = await unitOfWork.Films.SearchAsync(searchText, pageNumber, pageSize);

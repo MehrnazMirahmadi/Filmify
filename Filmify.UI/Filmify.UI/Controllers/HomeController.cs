@@ -11,7 +11,7 @@ namespace Filmify.UI.Controllers
       
         public async Task<IActionResult> Index()
         {
-            var paging = new KeysetPagingRequest { PageSize = 6, LastKey = "0"};
+            var paging = new KeysetPagingRequest { PageSize = 4, LastKey = "0"};
             var films = await api.SearchFilmsAsync("", paging); 
             return View(films);
         }
