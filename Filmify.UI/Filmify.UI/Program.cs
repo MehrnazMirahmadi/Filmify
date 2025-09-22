@@ -14,6 +14,16 @@ builder.Services.AddHttpClient<FilmApiClient>(client =>
         retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
     )
 );
+// HttpClient ???? Identity API
+builder.Services.AddHttpClient<IdentityApiClient>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7246/");
+}).AddTransientHttpErrorPolicy(policyBuilder =>
+    policyBuilder.WaitAndRetryAsync(
+        3,
+        retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+    )
+);
 
 
 var app = builder.Build();
