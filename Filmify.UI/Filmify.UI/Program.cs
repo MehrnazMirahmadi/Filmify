@@ -2,7 +2,12 @@ using Filmify.UI.Services;
 using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<FilmApiClient>(client =>
@@ -38,7 +43,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();

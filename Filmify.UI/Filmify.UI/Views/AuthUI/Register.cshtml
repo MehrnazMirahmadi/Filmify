@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="sign section--bg" data-bg="img/section/section.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="sign__content">
+                    <!-- registration form -->
+                    <form asp-action="Register" method="post" class="sign__form">
+                        <a href="index.html" class="sign__logo">
+                            <img src="~/img/logo.svg" alt="">
+                        </a>
+
+                        <div class="sign__group">
+                            <input  type="text"  name="fullName"  class="sign__input" placeholder="Full Name" required />
+                        </div>
+
+                        <div class="sign__group">
+                            <input type="email" name="email" class="sign__input" placeholder="Email" type="email" required />
+                        </div>
+
+                        <div class="sign__group">
+                            <input type="password" name="password" class="sign__input" placeholder="Password" type="password" required />
+                        </div>
+
+                        <div class="sign__group sign__group--checkbox">
+                            <input id="agree" name="agree" type="checkbox" checked="checked">
+                            <label for="agree">I agree to the <a href="#">Privacy Policy</a></label>
+                        </div>
+
+                        <button class="sign__btn" type="submit">Sign up</button>
+
+                        @if(ViewBag.Error != null)
+                        {
+                            <div style="color:red; margin-top:10px;">@ViewBag.Error</div>
+                        }
+
+                        <span class="sign__text">Already have an account? <a href="signin.html">Sign in!</a></span>
+                    </form>
+                    <!-- registration form -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

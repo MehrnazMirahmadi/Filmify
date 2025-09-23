@@ -17,13 +17,11 @@ public class AuthController : ControllerBase
         _jwtService = jwtService;
     }
 
-    /// <summary>
-    /// ثبت‌نام کاربر جدید با role های اختیاری
-    /// </summary>
+ 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        // Validation ساده
+        // Validation 
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             return BadRequest("Email and Password are required.");
 
@@ -45,7 +43,7 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// ورود کاربر و دریافت JWT
+    /// User Login and Get JWT
     /// </summary>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
@@ -62,9 +60,7 @@ public class AuthController : ControllerBase
 
     }
 
-    /// <summary>
-    /// اختصاص role به کاربر (اختیاری، نیازمند Admin)
-    /// </summary>
+   
     [HttpPost("assign-roles/{userId}")]
     public async Task<IActionResult> AssignRoles(long userId, [FromBody] List<string> roles)
     {
