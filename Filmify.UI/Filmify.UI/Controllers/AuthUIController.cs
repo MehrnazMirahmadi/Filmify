@@ -1,66 +1,56 @@
-﻿using Filmify.UI.Services;
+﻿using Filmify.UI.Models;
+using Filmify.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmify.UI.Controllers;
 
-public class AuthUIController : Controller
+public class AuthUIController(IdentityApiClient identityApi) : Controller
 {
-    private readonly IdentityApiClient _identityApi;
-
-    public AuthUIController(IdentityApiClient identityApi)
-    {
-        _identityApi = identityApi;
-    }
 
     [HttpGet]
     public IActionResult Login()
     {
-        return View();
+        return View(new LoginViewModel());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(string email, string password)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-        {
-            ViewBag.Error = "ایمیل و پسورد الزامی است.";
-            return View();
-        }
+        if (!ModelState.IsValid)
+            return View(model);
 
         try
         {
-            var result = await _identityApi.LoginAsync(email, password);
+            var result = await identityApi.LoginAsync(model.Email, model.Password);
 
-            // ذخیره JWT در سشن
             HttpContext.Session.SetString("AuthToken", result.Token);
+
 
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {
             ViewBag.Error = ex.Message;
-            return View();
+            return View(model);
         }
     }
+
 
     [HttpGet]
     public IActionResult Register()
     {
-        return View();
+        return View(new RegisterViewModel());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(string fullName, string email, string password)
+    public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-        {
-            ViewBag.Error = "ایمیل و پسورد الزامی است.";
-            return View();
-        }
+        if (!ModelState.IsValid)
+            return View(model);
 
         try
         {
-            await _identityApi.RegisterAsync(fullName, email, password, new[] { "User" });
+            await identityApi.RegisterAsync(model.FullName, model.Email, model.Password, new[] { "User" });
 
             TempData["Message"] = "ثبت‌نام با موفقیت انجام شد، لطفاً وارد شوید.";
             return RedirectToAction("Login");
@@ -68,7 +58,8 @@ public class AuthUIController : Controller
         catch (Exception ex)
         {
             ViewBag.Error = ex.Message;
-            return View();
+            return View(model);
         }
     }
+
 }
