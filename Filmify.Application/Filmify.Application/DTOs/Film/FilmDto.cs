@@ -1,4 +1,6 @@
-﻿using Filmify.Domain.ValueObjects;
+﻿using Filmify.Application.DTOs.Box;
+using Filmify.Application.DTOs.Tag;
+using Filmify.Domain.ValueObjects;
 
 namespace Filmify.Application.DTOs.Film;
 
@@ -20,7 +22,7 @@ public class FilmDto
     public Guid? ApprovalUserID { get; set; }
     public DateTime? ApprovalDate { get; set; }
     public int? ReleaseYear { get; set; }
-    public ICollection<string>? Tags { get; set; } 
-    public ICollection<string>? Boxes { get; set; } 
+    public ICollection<TagDto>? Tags { get; set; }
+    public ICollection<BoxDto>? Boxes { get; set; }
 }
 

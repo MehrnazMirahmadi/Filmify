@@ -37,6 +37,5 @@ public class FilmsController(FilmApiClient api) : Controller
         var result = await api.GetPagedFilmsAsync(searchText ?? "", pageNumber, pageSize);
         return View(result);
     }
-
-
+  
 }

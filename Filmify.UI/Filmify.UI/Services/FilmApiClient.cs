@@ -1,7 +1,10 @@
 ﻿using Filmify.Application.Common.Paging;
+using Filmify.Application.DTOs.Box;
 using Filmify.Application.DTOs.Category;
 using Filmify.Application.DTOs.Film;
+using Filmify.Application.DTOs.Tag;
 using Filmify.UI.Models;
+using System.Net.Http;
 
 namespace Filmify.UI.Services;
 
@@ -87,9 +90,45 @@ public class FilmApiClient(HttpClient http)
         var response = await http.GetFromJsonAsync<PagedResult<FilmDto>>(query);
         return response ?? new PagedResult<FilmDto>();
     }
+    // --- Create Film
+    public async Task<FilmDto?> CreateFilmAsync(FilmCreateDto dto)
+    {
+        var response = await http.PostAsJsonAsync("api/films", dto);
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<FilmDto>();
+        return null;
+    }
 
+    // --- Update Film
+    public async Task<FilmDto?> UpdateFilmAsync(long id, FilmUpdateDto dto)
+    {
+        var response = await http.PutAsJsonAsync($"api/films/{id}", dto);
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<FilmDto>();
+        return null;
+    }
 
+    // --- Delete Film
+    public async Task<bool> DeleteFilmAsync(long id)
+    {
+        var response = await http.DeleteAsync($"api/films/{id}");
+        return response.IsSuccessStatusCode;
+    }
+    // ----------------- Boxes -----------------
+    public async Task<List<BoxDto>> GetAllBoxesAsync()
+    {
+        var response = await http.GetAsync("api/Boxes");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<BoxDto>>() ?? new List<BoxDto>();
+    }
 
+    // ----------------- Tags -----------------
+    public async Task<List<TagDto>> GetAllTagsAsync()
+    {
+        var response = await http.GetAsync("api/Tags");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<List<TagDto>>() ?? new List<TagDto>();
+    }
 
 }
 

@@ -52,7 +52,7 @@ public class AuthUIController(IdentityApiClient identityApi) : Controller
         {
             await identityApi.RegisterAsync(model.FullName, model.Email, model.Password, new[] { "User" });
 
-            TempData["Message"] = "ثبت‌نام با موفقیت انجام شد، لطفاً وارد شوید.";
+            TempData["Message"] = "User registered successfully";
             return RedirectToAction("Login");
         }
         catch (Exception ex)

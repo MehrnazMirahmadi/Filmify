@@ -1,0 +1,51 @@
+﻿@using Filmify.Application.DTOs.Box
+@using Filmify.Application.DTOs.Tag
+@model Filmify.Application.DTOs.Film.FilmUpdateDto
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label>Film Title</label>
+        <input asp-for="FilmTitle" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Cover Image</label>
+        <input type="file" name="coverFile" class="form-control" />
+        @if (!string.IsNullOrEmpty(Model.CoverImage))
+        {
+            <img src="@Model.CoverImage" alt="cover" width="120" class="mt-2" />
+        }
+    </div>
+
+    <div class="mb-3">
+        <label>Boxes</label>
+        <select asp-for="BoxIds" class="form-control" multiple>
+            @{
+                var boxes = ViewBag.Boxes as List<BoxDto> ?? new List<BoxDto>();
+            }
+            @foreach (var box in boxes)
+            {
+                <option value="@box.BoxId" selected="@(Model.BoxIds?.Contains(box.BoxId) == true)">
+                    @box.BoxName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Tags</label>
+        <select asp-for="TagIds" class="form-control" multiple>
+            @{
+                var tags = ViewBag.Tags as List<TagDto> ?? new List<TagDto>();
+            }
+            @foreach (var tag in tags)
+            {
+                <option value="@tag.TagId" selected="@(Model.TagIds?.Contains(tag.TagId) == true)">
+                    @tag.TagText
+                </option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

@@ -27,6 +27,10 @@ public class MappingProfile : Profile
         CreateMap<Category, CategoryDto>();
 
         CreateMap<Box, BoxDto>();
-        CreateMap<Tag, TagDto>();
+        CreateMap<BoxCreateDto, Box>();
+        CreateMap<BoxUpdateDto, Box>();
+        CreateMap<Tag, TagDto>().ReverseMap();
+        CreateMap<TagCreateDto, Tag>();
+        CreateMap<TagUpdateDto, Tag>();
     }
 }

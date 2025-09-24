@@ -13,6 +13,8 @@ namespace Filmify.Application
             // --- Application Services
             services.AddScoped<IFilmService, FilmService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IBoxService, BoxService>();
 
             // ✅ Register AutoMapper manually 
             services.AddSingleton<IMapper>(sp =>

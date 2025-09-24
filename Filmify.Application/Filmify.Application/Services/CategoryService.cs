@@ -4,7 +4,6 @@ using Filmify.Application.Common.Paging;
 using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
 using Filmify.Application.DTOs.Category;
-using Filmify.Application.DTOs.Film;
 using Filmify.Domain.Contracts.Interfaces;
 using Filmify.Domain.Entities;
 using System.Linq.Expressions;

@@ -3,7 +3,9 @@ using Filmify.Application.Common;
 using Filmify.Application.Common.Paging;
 using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
+using Filmify.Application.DTOs.Box;
 using Filmify.Application.DTOs.Film;
+using Filmify.Application.DTOs.Tag;
 using Filmify.Domain.Contracts.Interfaces;
 using Filmify.Domain.Entities;
 using System.Linq.Expressions;
@@ -174,7 +176,16 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
             LikeCount = f.LikeCount,
             ViewCount = f.ViewCount,
             FilmScore = f.FilmScore,
-            Tags = f.FilmTags.Select(ft => ft.Tag.TagText).ToList()
+            Tags = f.FilmTags?.Select(ft => new TagDto
+            {
+                TagId = ft.TagId,
+                TagText = ft.Tag.TagText
+            }).ToList(),
+            Boxes = f.FilmBoxes?.Select(fb => new BoxDto
+            {
+                BoxId = fb.BoxId,
+                BoxName = fb.Box.BoxName
+            }).ToList()
         }).ToList();
 
 
@@ -242,7 +253,16 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
             FilmId = f.FilmId,
             FilmTitle = f.FilmTitle,
             CategoryName = f.Category?.Name,
-            Tags = f.FilmTags?.Select(ft => ft.Tag.TagText).ToList(),
+            Tags = f.FilmTags?.Select(ft => new TagDto
+            {
+                TagId = ft.TagId,
+                TagText = ft.Tag.TagText
+            }).ToList(),
+            Boxes = f.FilmBoxes?.Select(fb => new BoxDto
+            {
+                BoxId = fb.BoxId,
+                BoxName = fb.Box.BoxName
+            }).ToList(),
             CoverImage = f.CoverImage,
             RegDate = f.RegDate,
             LikeCount = f.LikeCount,
@@ -268,7 +288,16 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
             FilmId = f.FilmId,
             FilmTitle = f.FilmTitle,
             CategoryName = f.Category?.Name,
-            Tags = f.FilmTags.Select(ft => ft.Tag.TagText).ToList(),
+            Tags = f.FilmTags?.Select(ft => new TagDto
+            {
+                TagId = ft.TagId,
+                TagText = ft.Tag.TagText
+            }).ToList(),
+            Boxes = f.FilmBoxes?.Select(fb => new BoxDto
+            {
+                BoxId = fb.BoxId,
+                BoxName = fb.Box.BoxName
+            }).ToList(),
             CoverImage = f.CoverImage,
             RegDate = f.RegDate,
             LikeCount = f.LikeCount,
