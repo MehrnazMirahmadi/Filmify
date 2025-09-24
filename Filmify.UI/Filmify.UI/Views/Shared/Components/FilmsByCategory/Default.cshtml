@@ -34,7 +34,8 @@
                                       <span class="card__category">
                                            @foreach (var tag in film.Tags)
                                            {
-                                               <a href="@Url.Action("ByTag", "Films", new { tag = tag })">@tag</a>
+                                               <a href="@Url.Action("ByTag", "Films", new { tagId = tag.TagId })">@tag.TagText</a>
+
                                            }
                                       </span>
                                   }

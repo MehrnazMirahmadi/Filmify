@@ -19,13 +19,14 @@
                     {
                         <a href="#">@film.CategoryName</a>
                     }
-                    @if (film.Tags != null)
-                    {
-                        foreach (var tag in film.Tags)
-                        {
-                            <a href="#">@tag</a>
-                        }
-                    }
+                  @if (film.Tags != null)
+                  {
+                            foreach (var tag in film.Tags)
+                             {
+                               <a href="#">@tag.TagText</a>
+                             }
+                 }
+
                 </span>
                 <span class="card__rate">
                     <i class="icon ion-ios-star"></i>@(film.FilmScore?.ToString("0.0") ?? "N/A")
