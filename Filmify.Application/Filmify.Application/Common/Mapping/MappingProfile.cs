@@ -13,8 +13,9 @@ public class MappingProfile : Profile
     {
         CreateMap<Film, FilmDto>()
             .ForMember(dest => dest.FilmId, opt => opt.MapFrom(src => src.FilmId.ToString()))
-            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.FilmTags.Select(ft => ft.Tag.TagText)))
-            .ForMember(dest => dest.Boxes, opt => opt.MapFrom(src => src.FilmBoxes.Select(fb => fb.Box.BoxName)));
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.FilmTags.Select(ft => ft.Tag)))
+            .ForMember(dest => dest.Boxes, opt => opt.MapFrom(src => src.FilmBoxes.Select(fb => fb.Box)))
+             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
 
         CreateMap<FilmCreateDto, Film>()
             .ForMember(dest => dest.FilmTags, opt => opt.Ignore())

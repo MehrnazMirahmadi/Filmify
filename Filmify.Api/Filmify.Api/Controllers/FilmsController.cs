@@ -1,6 +1,7 @@
 ﻿using Filmify.Application.Common.Paging;
 using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
+using Filmify.Application.DTOs;
 using Filmify.Application.DTOs.Film;
 using Filmify.Application.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,71 +13,84 @@ public class FilmsController(IFilmService filmService) : ControllerBase
 {
 
 
-    // GET: api/Film/{id}
+
+
+    // GET: api/Film
+    //[HttpGet]
+    //public async Task<IActionResult> GetAll([FromQuery] FilmFilterRequest filter)
+    //{
+
+    //    var sortOptions = new SortOptions
+    //    {
+    //        SortBy = "FilmId",
+    //        Direction = filter.Direction
+    //    };
+
+    //    var result = await filmService.GetFilmsAsync(filter, sortOptions);
+
+    //    if (result.IsRight)
+    //        return Ok(result.Right);
+    //    else
+    //        return NotFound(new { Message = result.Left });
+
+    //}
+
+    // GET: api/Films/{id}
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
         var result = await filmService.GetFilmByIdAsync(id);
-        if (result.IsRight)
-            return Ok(result.Right);
-        else
-            return NotFound(new { Message = result.Left });
+
+        return result.IsRight
+            ? Ok(ApiResponse<FilmDto>.Ok(result.Right))
+            : NotFound(ApiResponse<FilmDto>.Fail(result.Left));
     }
 
-    // GET: api/Film
+    // GET: api/Films
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] FilmFilterRequest filter)
+    public async Task<IActionResult> GetAll([FromQuery] FilmFilterRequest filter, [FromQuery] SortOptions? sort = null)
     {
+        sort ??= new SortOptions { SortBy = "FilmId", Direction = filter.Direction };
+        var result = await filmService.GetFilmsAsync(filter, sort);
 
-        var sortOptions = new SortOptions
-        {
-            SortBy = "FilmId",
-            Direction = filter.Direction
-        };
-
-        var result = await filmService.GetFilmsAsync(filter, sortOptions);
-
-        if (result.IsRight)
-            return Ok(result.Right);
-        else
-            return NotFound(new { Message = result.Left });
-
+        return result.IsRight
+            ? Ok(ApiResponse<KeysetPagingResult<FilmDto, long>>.Ok(result.Right))
+            : NotFound(ApiResponse<KeysetPagingResult<FilmDto, long>>.Fail(result.Left));
     }
 
-
-    // POST: api/Film
+    // POST: api/Films
     [HttpPost]
-    public async Task<IActionResult> CreateFilm([FromBody] FilmCreateDto dto)
+    public async Task<IActionResult> Create([FromBody] FilmCreateDto dto)
     {
         var result = await filmService.CreateFilmAsync(dto);
-        if (result.IsRight)
-            return Ok(result.Right);
-        else
-            return NotFound(new { Message = result.Left });
+
+        return result.IsRight
+            ? Ok(ApiResponse<FilmDto>.Ok(result.Right))
+            : BadRequest(ApiResponse<FilmDto>.Fail(result.Left));
     }
 
-    // PUT: api/Film/{id}
+    // PUT: api/Films/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateFilm(long id, [FromBody] FilmUpdateDto dto)
+    public async Task<IActionResult> Update(long id, [FromBody] FilmUpdateDto dto)
     {
         var result = await filmService.UpdateFilmAsync(id, dto);
-        if (result.IsRight)
-            return Ok(result.Right);
-        else
-            return NotFound(new { Message = result.Left });
+
+        return result.IsRight
+            ? Ok(ApiResponse<FilmDto>.Ok(result.Right))
+            : NotFound(ApiResponse<FilmDto>.Fail(result.Left));
     }
 
-    // DELETE: api/Film/{id}
+    // DELETE: api/Films/{id}
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteFilm(long id)
+    public async Task<IActionResult> Delete(long id)
     {
         var result = await filmService.DeleteFilmAsync(id);
-        if (result.IsRight)
-            return Ok(result.Right);
-        else
-            return NotFound(new { Message = result.Left });
 
+        return result.IsRight
+            ? Ok(ApiResponse<bool>.Ok(result.Right))
+            : NotFound(ApiResponse<bool>.Fail(result.Left));
     }
+
 
     [HttpGet("category/{categoryId:long}")]
     public async Task<IActionResult> GetByCategory(long categoryId, [FromQuery] KeysetPagingRequest paging)

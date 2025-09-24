@@ -4,6 +4,7 @@ namespace Filmify.Application.DTOs.Film;
 
 public class FilmUpdateDto
 {
+    public long FilmId { get; set; }
     public string FilmTitle { get; set; } = null!;
     public Duration? Duration { get; set; }
     public string? CoverImage { get; set; }

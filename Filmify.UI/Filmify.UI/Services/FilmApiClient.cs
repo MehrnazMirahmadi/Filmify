@@ -35,11 +35,14 @@ public class FilmApiClient(HttpClient http)
     }
 
 
-    public async Task<FilmDto> GetFilmByIdAsync(long id)
+    public async Task<FilmDto?> GetFilmByIdAsync(long id)
     {
-        var response = await http.GetFromJsonAsync<ApiResponse<FilmDto>>($"api/films/{id}");
-        return response?.Data!;
+        var response = await http.GetFromJsonAsync<ApiResponse<FilmDto>>($"api/Films/{id}");
+        if (response == null || response.Data == null)
+            return null; 
+        return response.Data;
     }
+
     public async Task<List<CategoryDto>> GetCategoriesAsync()
     {
         try
@@ -115,20 +118,25 @@ public class FilmApiClient(HttpClient http)
         return response.IsSuccessStatusCode;
     }
     // ----------------- Boxes -----------------
+    /* public async Task<List<BoxDto>> GetAllBoxesAsync()
+     {
+         var response = await http.GetAsync("api/Boxes");
+         response.EnsureSuccessStatusCode();
+         return await response.Content.ReadFromJsonAsync<List<BoxDto>>() ?? new List<BoxDto>();
+     }*/
     public async Task<List<BoxDto>> GetAllBoxesAsync()
     {
-        var response = await http.GetAsync("api/Boxes");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<BoxDto>>() ?? new List<BoxDto>();
+        var response = await http.GetFromJsonAsync<ApiResponse<KeysetPagingResult<BoxDto, long>>>("api/Boxes");
+        return response?.Data?.Items?.ToList() ?? new List<BoxDto>();
     }
 
     // ----------------- Tags -----------------
     public async Task<List<TagDto>> GetAllTagsAsync()
     {
-        var response = await http.GetAsync("api/Tags");
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<TagDto>>() ?? new List<TagDto>();
+        var response = await http.GetFromJsonAsync<ApiResponse<KeysetPagingResult<TagDto, long>>>("api/Tags");
+        return response?.Data?.Items?.ToList() ?? new List<TagDto>();
     }
+
 
 }
 

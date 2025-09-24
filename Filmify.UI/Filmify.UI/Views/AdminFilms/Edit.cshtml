@@ -3,6 +3,8 @@
 @model Filmify.Application.DTOs.Film.FilmUpdateDto
 
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="FilmId" />
+
     <div class="mb-3">
         <label>Film Title</label>
         <input asp-for="FilmTitle" class="form-control" />

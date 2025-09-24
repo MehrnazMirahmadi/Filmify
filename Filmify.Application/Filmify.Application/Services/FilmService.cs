@@ -17,6 +17,7 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
     public async Task<Either<string, FilmDto>> GetFilmByIdAsync(long id)
     {
+        Console.WriteLine($"Fetching Film with id={id}");
         var film = await unitOfWork.Films.GetFilmWithRelationsAsync(id);
         if (film == null) return Either<string, FilmDto>.Fail("Film not found");
 

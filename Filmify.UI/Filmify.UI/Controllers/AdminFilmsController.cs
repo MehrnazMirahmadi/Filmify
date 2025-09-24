@@ -1,11 +1,10 @@
 ﻿using Filmify.Application.DTOs.Film;
 using Filmify.UI.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmify.UI.Controllers;
 
-[Authorize(Roles = "Admin")]
+//[Authorize(Roles = "Admin")]
 public class AdminFilmsController(FilmApiClient api) : Controller
 {
     public async Task<IActionResult> Index()
@@ -26,11 +25,11 @@ public class AdminFilmsController(FilmApiClient api) : Controller
         if (coverFile != null)
         {
             var fileName = Guid.NewGuid() + Path.GetExtension(coverFile.FileName);
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/covers", fileName);
             using var stream = new FileStream(path, FileMode.Create);
             await coverFile.CopyToAsync(stream);
 
-            dto.CoverImage = "/uploads/" + fileName;
+            dto.CoverImage = fileName;
         }
 
         await api.CreateFilmAsync(dto);
@@ -46,6 +45,7 @@ public class AdminFilmsController(FilmApiClient api) : Controller
         ViewBag.Tags = await api.GetAllTagsAsync();   // List<TagDto>
         return View(new FilmUpdateDto
         {
+            FilmId = film.FilmId,        
             FilmTitle = film.FilmTitle,
             Duration = film.Duration,
             CoverImage = film.CoverImage,
@@ -62,20 +62,20 @@ public class AdminFilmsController(FilmApiClient api) : Controller
         if (coverFile != null)
         {
             var fileName = Guid.NewGuid() + Path.GetExtension(coverFile.FileName);
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/covers", fileName);
             using var stream = new FileStream(path, FileMode.Create);
             await coverFile.CopyToAsync(stream);
 
-            dto.CoverImage = "/uploads/" + fileName;
+            dto.CoverImage =  fileName;
         }
 
         await api.UpdateFilmAsync(id, dto);
-        return RedirectToAction("Index");
+        return RedirectToAction("films/Index");
     }
 
     public async Task<IActionResult> Delete(long id)
     {
         await api.DeleteFilmAsync(id);
-        return RedirectToAction("Index");
+        return RedirectToAction("films/Index");
     }
 }
