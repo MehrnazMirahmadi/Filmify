@@ -4,7 +4,6 @@ using Filmify.Application.DTOs.Category;
 using Filmify.Application.DTOs.Film;
 using Filmify.Application.DTOs.Tag;
 using Filmify.UI.Models;
-using System.Net.Http;
 
 namespace Filmify.UI.Services;
 
@@ -15,21 +14,12 @@ public class FilmApiClient(HttpClient http)
     {
         try
         {
-            var response = await http.GetFromJsonAsync<KeysetPagingResultViewModel<FilmDto>>("api/films");
-            return response?.Items ?? new List<FilmDto>();
-        }
-        catch (HttpRequestException httpEx)
-        {
-            // Log http errors
-            Console.WriteLine(httpEx);
-
-            return new List<FilmDto>();
+            var response = await http.GetFromJsonAsync<ApiResponse<KeysetPagingResult<FilmDto, long>>>("api/films");
+            return response?.Data?.Items?.ToList() ?? new List<FilmDto>();
         }
         catch (Exception ex)
         {
-
             Console.WriteLine(ex);
-
             return new List<FilmDto>();
         }
     }
@@ -39,7 +29,7 @@ public class FilmApiClient(HttpClient http)
     {
         var response = await http.GetFromJsonAsync<ApiResponse<FilmDto>>($"api/Films/{id}");
         if (response == null || response.Data == null)
-            return null; 
+            return null;
         return response.Data;
     }
 
@@ -118,12 +108,7 @@ public class FilmApiClient(HttpClient http)
         return response.IsSuccessStatusCode;
     }
     // ----------------- Boxes -----------------
-    /* public async Task<List<BoxDto>> GetAllBoxesAsync()
-     {
-         var response = await http.GetAsync("api/Boxes");
-         response.EnsureSuccessStatusCode();
-         return await response.Content.ReadFromJsonAsync<List<BoxDto>>() ?? new List<BoxDto>();
-     }*/
+
     public async Task<List<BoxDto>> GetAllBoxesAsync()
     {
         var response = await http.GetFromJsonAsync<ApiResponse<KeysetPagingResult<BoxDto, long>>>("api/Boxes");
@@ -135,6 +120,16 @@ public class FilmApiClient(HttpClient http)
     {
         var response = await http.GetFromJsonAsync<ApiResponse<KeysetPagingResult<TagDto, long>>>("api/Tags");
         return response?.Data?.Items?.ToList() ?? new List<TagDto>();
+    }
+    public async Task<long> CreateTagAsync(string tagText)
+    {
+        var response = await http.PostAsJsonAsync("api/Tags", new { TagText = tagText });
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<ApiResponse<TagDto>>();
+            return result!.Data.TagId;
+        }
+        throw new Exception("Cannot create tag");
     }
 
 

@@ -1,24 +1,64 @@
 ﻿@model List<Filmify.Application.DTOs.Film.FilmDto>
 
-<h2>Films</h2>
+<div class="sign__content">
+    <div class="sign__form">
+        <a href="index.html" class="sign__logo">
+            <img src="img/logo.svg" alt="">
+        </a>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Boxes</th>
-            <th>Tags</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var film in Model)
-        {
-            <tr>
-                <td>@film.FilmTitle</td>
-                <td>@string.Join(", ", film.Boxes)</td>
-                <td>@string.Join(", ", film.Tags)</td>
-            </tr>
-        }
-    </tbody>
+        <h2 class="card__title">Films</h2>
 
-</table>
+        <div class="sign__group">
+            <table class="sign__table table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Boxes</th>
+                        <th>Tags</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var film in Model)
+                    {
+                        <tr>
+                            <td>@film.FilmTitle</td>
+                            <td>@string.Join(", ", film.Boxes?.Select(b => b.BoxName) ?? new List<string>())</td>
+                            <td>@string.Join(", ", film.Tags?.Select(t => t.TagText) ?? new List<string>())</td>
+                            <td>
+                                <a href="javascript:void(0)" data-id="@film.FilmId" class="sign__btn edit-film btn btn-primary btn-sm">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: حتماً خارج از sign__form و sign__content -->
+<div class="modal fade" id="filmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content p-4" id="filmModalContent">
+            <!-- فرم Edit بارگذاری می‌شود -->
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).on("click", ".edit-film", function () {
+        var filmId = $(this).data("id");
+
+        // بارگذاری فرم PartialView داخل مودال
+        $("#filmModalContent").load("/Films/Edit/" + filmId, function () {
+            var modal = new bootstrap.Modal(document.getElementById('filmModal'));
+            modal.show();
+        });
+    });
+</script>
