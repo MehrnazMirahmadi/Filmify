@@ -53,36 +53,16 @@
     <input type="hidden" asp-for="TagIds" id="TagIdsHidden" />
 </div>
 
-<script>
-    function updateHiddenTags() {
-        let ids = [];
-        $("#tagContainer .tag-badge").each(function() {
-            ids.push($(this).data("id"));
-        });
-        $("#TagIdsHidden").val(ids.join(","));
-    }
-
-    $(document).on("click", "#addTagBtn", function() {
-        let newTag = $("#newTagInput").val().trim();
-        if(newTag) {
-            let newId = "new_" + newTag.replace(/\s+/g, "_"); // id موقت برای تگ جدید
-            $("#tagContainer").append('<span class="badge bg-primary tag-badge" data-id="'+newId+'">'+newTag+' <a href="#" class="text-white remove-tag">&times;</a></span>');
-            $("#newTagInput").val("");
-            updateHiddenTags();
-        }
-    });
-
-    $(document).on("click", ".remove-tag", function(e){
-        e.preventDefault();
-        $(this).parent().remove();
-        updateHiddenTags();
-    });
-
-    // هنگام submit فرم
-    $("#editFilmForm").on("submit", function() {
-        updateHiddenTags();
-    });
-</script>
 
     </form>
 </div>
+
+<div class="modal fade" id="filmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content p-4" id="filmModalContent"></div>
+    </div>
+</div>
+
+
+
+

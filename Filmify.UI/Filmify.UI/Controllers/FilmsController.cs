@@ -61,21 +61,7 @@ public class FilmsController(FilmApiClient api) : Controller
         });
     }
 
-    //[HttpPost]
-    //public async Task<IActionResult> Edit(FilmUpdateDto dto, IFormFile? coverFile)
-    //{
-    //    if (coverFile != null)
-    //    {
-    //        var fileName = Guid.NewGuid() + Path.GetExtension(coverFile.FileName);
-    //        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/covers", fileName);
-    //        using var stream = new FileStream(path, FileMode.Create);
-    //        await coverFile.CopyToAsync(stream);
-    //        dto.CoverImage = fileName;
-    //    }
 
-    //    await api.UpdateFilmAsync(dto.FilmId, dto);
-    //    return RedirectToAction("Index");
-    //}
     [HttpPost]
     public async Task<IActionResult> Edit(FilmUpdateDto dto)
     {
