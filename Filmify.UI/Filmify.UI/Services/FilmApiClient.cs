@@ -84,7 +84,7 @@ public class FilmApiClient(HttpClient http)
         return response ?? new PagedResult<FilmDto>();
     }
     // --- Create Film
-    public async Task<FilmDto?> CreateFilmAsync(FilmCreateDto dto)
+    public async Task<FilmDto?> CreateFilmAsync(FilmUpdateDto dto)
     {
         var response = await http.PostAsJsonAsync("api/films", dto);
         if (response.IsSuccessStatusCode)

@@ -45,7 +45,7 @@ public class FilmsController(FilmApiClient api) : Controller
         var film = await api.GetFilmByIdAsync(id);
         if (film == null) return NotFound();
         ViewBag.Boxes = await api.GetAllBoxesAsync();
-        ViewBag.Tags = await api.GetAllTagsAsync();
+       ViewBag.Tags = await api.GetAllTagsAsync();
         var allTags = await api.GetAllTagsAsync();
         return PartialView("_EditFilm", new FilmUpdateDto
         {
@@ -121,6 +121,6 @@ public class FilmsController(FilmApiClient api) : Controller
     public async Task<IActionResult> Delete(long id)
     {
         await api.DeleteFilmAsync(id);
-        return RedirectToAction("films/Index");
+        return RedirectToAction("Index");
     }
 }

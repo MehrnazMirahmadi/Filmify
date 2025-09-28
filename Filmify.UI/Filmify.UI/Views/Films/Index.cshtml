@@ -10,7 +10,13 @@
         </a>
 
         <h2 class="card__title">Films</h2>
-
+        
+        <!-- Add New Film Button -->
+        <div class="mb-3">
+            <button type="button" class="btn btn-success mb-3" id="addNewFilmBtn">
+                <i class="fas fa-plus"></i> Add New Film
+            </button>
+        </div>
         <div class="sign__group">
             <table class="sign__table table table-striped table-hover">
                 <thead>
@@ -29,7 +35,22 @@
                             <td>@string.Join(", ", film.Boxes?.Select(b => b.BoxName) ?? new List<string>())</td>
                             <td>@string.Join(", ", film.Tags?.Select(t => t.TagText) ?? new List<string>())</td>
                             <td>
-                                <a href="javascript:void(0)" data-id="@film.FilmId" class="sign__btn edit-film btn btn-primary btn-sm">Edit</a>
+                              
+                              <a href="javascript:void(0)" 
+                                 data-id="@film.FilmId" 
+                                 class="edit-film btn btn-sm btn-outline-primary me-2" 
+                                 title="Edit">
+                                  <i class="fas fa-edit"></i>
+                              </a>
+
+                              <a href="@Url.Action("Delete", "Films", new { id = film.FilmId })" 
+                                 onclick="return confirm('Are you sure you want to delete this film?');" 
+                                 class="btn btn-sm btn-outline-danger" 
+                                 title="Delete">
+                                  <i class="fas fa-trash"></i>
+                              </a>
+
+
                             </td>
                         </tr>
                     }
