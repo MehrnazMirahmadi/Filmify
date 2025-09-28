@@ -61,34 +61,35 @@ public class FilmsController(FilmApiClient api) : Controller
         });
     }
 
-
     [HttpPost]
     public async Task<IActionResult> Edit(FilmUpdateDto dto)
     {
-        // TagIds شامل "1,2,new_NewTag" است
         var finalTagIds = new List<long>();
 
-        if (dto.TagIds != null)
+        // پردازش تگ‌ها از رشته‌ی RawTagIds
+        if (!string.IsNullOrEmpty(dto.RawTagIds))
         {
-            foreach (var tag in dto.TagIds)
+            var tags = dto.RawTagIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var tag in tags)
             {
-                if (tag.ToString().StartsWith("new_"))
+                if (tag.StartsWith("new_"))
                 {
-                    // ساخت تگ جدید در دیتابیس
-                    var tagText = tag.ToString().Substring(4).Replace("_", " ");
+                    // تبدیل new_Tag به تگ واقعی
+                    var tagText = tag.Substring(4).Replace("_", " ");
                     var newTagId = await api.CreateTagAsync(tagText);
                     finalTagIds.Add(newTagId);
                 }
-                else
+                else if (long.TryParse(tag, out var tagId))
                 {
-                    finalTagIds.Add(tag);
+                    finalTagIds.Add(tagId);
                 }
             }
         }
 
         dto.TagIds = finalTagIds;
 
-        // عکس
+        // مدیریت فایل کاور
         if (Request.Form.Files.Any())
         {
             var coverFile = Request.Form.Files["coverFile"];
@@ -96,19 +97,23 @@ public class FilmsController(FilmApiClient api) : Controller
             {
                 var fileName = Guid.NewGuid() + Path.GetExtension(coverFile.FileName);
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/covers", fileName);
+
                 using var stream = new FileStream(path, FileMode.Create);
                 await coverFile.CopyToAsync(stream);
+
                 dto.CoverImage = fileName;
             }
         }
         else
         {
-            
+            // اگر فایل جدیدی نیومده، همون قبلی رو نگه داریم
             var existingFilm = await api.GetFilmByIdAsync(dto.FilmId);
             dto.CoverImage = existingFilm.CoverImage;
         }
 
+        // بروزرسانی فیلم
         await api.UpdateFilmAsync(dto.FilmId, dto);
+
         return RedirectToAction("Index");
     }
 

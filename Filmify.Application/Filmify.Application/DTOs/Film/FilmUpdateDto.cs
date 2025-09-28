@@ -13,5 +13,6 @@ public class FilmUpdateDto
     public string? FileUrl { get; set; }
     public ICollection<long>? BoxIds { get; set; }
     public ICollection<long>? TagIds { get; set; }
+    public string RawTagIds { get; set; }
     public List<TagDto> AllTags { get; set; } = new List<TagDto>();
 }

@@ -6,7 +6,7 @@
     <!-- Font -->
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600%7CUbuntu:300,400,500,700" rel="stylesheet">
 	 <partial name="_HeaderRefrences" />
-	
+	   @RenderSection("Styles", required: false) 
     <title>@ViewData["Title"] - Filmify.UI</title>
    
 </head>
@@ -16,9 +16,9 @@
 	<partial name="_Header" />
 	</header>
      <section class="home">
-           @* <div class="container">               *@
+                   
                 @RenderBody()
-            @* </div> *@
+           
       </section>
 	<!--Footer-->
 

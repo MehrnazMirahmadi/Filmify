@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -38,21 +38,21 @@ body {
     overflow: hidden;
 }
 
-    .sign__table th,
-    .sign__table td {
+.sign__table th,
+.sign__table td {
         padding: 12px 15px;
         text-align: left;
         border-bottom: 1px solid #333;
         color: #f5f5f5;
     }
 
-    .sign__table th {
+.sign__table th {
         background-color: #2a2a2a;
         font-weight: 600;
         color: #fff;
     }
 
-    .sign__table tr:hover {
+.sign__table tr:hover {
         background-color: #333;
     }
 #filmModal .modal-content {
