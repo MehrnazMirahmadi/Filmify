@@ -61,5 +61,12 @@ public class AuthUIController(IdentityApiClient identityApi) : Controller
             return View(model);
         }
     }
+    [HttpPost]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("AuthToken"); 
+        return RedirectToAction("Login", "AuthUI"); 
+    }
+
 
 }

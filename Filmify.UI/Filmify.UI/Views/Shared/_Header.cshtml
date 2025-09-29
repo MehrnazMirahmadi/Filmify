@@ -59,7 +59,7 @@
 							<!-- end header nav -->
 
 							<!-- header auth -->
-							<div class="header__auth">
+						@* 	<div class="header__auth">
 								<button class="header__search-btn" type="button">
 									<i class="icon ion-ios-search"></i>
 								</button>
@@ -68,7 +68,32 @@
 									<i class="icon ion-ios-log-in"></i>
 									<span>sign in</span>
 								</a>
-							</div>
+							</div> *@
+							<div class="header__auth">
+    <button class="header__search-btn" type="button">
+        <i class="icon ion-ios-search"></i>
+    </button>
+
+    @if (Context.Session.GetString("AuthToken") != null) 
+    {
+      
+        <a asp-controller="AuthUI" asp-action="Logout" class="header__sign-in">
+            <i class="icon ion-ios-log-out"></i>
+            <span>Logout</span>
+        </a>
+    }
+    else
+    {
+       
+        <a asp-controller="AuthUI" asp-action="Login" class="header__sign-in">
+            <i class="icon ion-ios-log-in"></i>
+            <span>Sign In</span>
+        </a>
+    }
+</div>
+
+
+
 							<!-- end header auth -->
 
 							<!-- header menu btn -->

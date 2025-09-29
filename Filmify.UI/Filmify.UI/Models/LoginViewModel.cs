@@ -2,11 +2,11 @@
 namespace Filmify.UI.Models;
 public class LoginViewModel
 {
-    [Required(ErrorMessage = "ایمیل الزامی است")]
-    [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
+    [Required(ErrorMessage = "Email is requier")]
+    [EmailAddress(ErrorMessage = "invalid email")]
     public string Email { get; set; }
 
-    [Required(ErrorMessage = "پسورد الزامی است")]
+    [Required(ErrorMessage = "password is requier")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
 

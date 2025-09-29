@@ -2,51 +2,68 @@
 @using Filmify.Application.DTOs.Box;
 @using Filmify.Application.DTOs.Category;
 
-
 @model Filmify.Application.DTOs.Film.FilmCreateDto
+@{
+    Layout = null;
+} 
 
-<form id="createFilmForm" method="post" enctype="multipart/form-data">
-    <div class="modal-header">
-        <h5 class="modal-title">Create New Film</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-    </div>
+@section Styles {
+   <link rel="stylesheet" href="../css/bootstrap.min.css">
+}
 
-    <div class="modal-body">
+<div class="sign__form">
+    <h4 class="card__title mb-3">Add New Film</h4>
+    <form id="createFilmForm" asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="mb-3">
-            <label class="form-label">Title</label>
+            <label asp-for="FilmTitle" class="form-label"></label>
             <input asp-for="FilmTitle" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Duration (minutes)</label>
+            <label asp-for="Duration" class="form-label"></label>
             <input asp-for="Duration" type="number" class="form-control" />
         </div>
-        <div class="mb-3">
-    <label class="form-label">Category</label>
-    <select asp-for="CategoryId" class="form-select"
-            asp-items="@(new SelectList(ViewBag.Categories ?? new List<CategoryDto>(), "CategoryId", "Name"))">
-        <option value="">-- Select Category --</option>
-    </select>
-</div>
 
         <div class="mb-3">
-            <label class="form-label">Capacity</label>
+            <label asp-for="CategoryId" class="form-label"></label>
+            <select asp-for="CategoryId" class="form-select"
+                    asp-items="@(new SelectList(ViewBag.Categories ?? new List<CategoryDto>(), "CategoryId", "Name"))">
+                <option value="">-- Select Category --</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Capacity" class="form-label"></label>
             <input asp-for="Capacity" type="number" class="form-control" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Cover</label>
+            <label for="coverFile" class="form-label">Cover</label>
             <input type="file" name="coverFile" class="form-control" />
         </div>
-        <input type="hidden" id="TagIdsHidden" name="RawTagIds" value="" />
-        <div id="tagContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
-    </div>
-     <div class="d-flex mb-2">
-        <input type="text" id="newTagInput" class="form-control me-2" placeholder="Add new tag" />
-        <button type="button" class="btn btn-secondary" id="addTagBtn">Add</button>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
-    </div>
-</form>
+
+        <div class="mb-3">
+            <label class="form-label">Tags</label>
+            <div id="tagContainer" class="d-flex flex-wrap gap-2 mb-2"></div>
+
+            <div class="d-flex mb-2">
+                <input type="text" id="newTagInput" class="form-control me-2" placeholder="Add new tag" />
+                <button type="button" class="btn btn-secondary" id="addTagBtn">Add</button>
+            </div>
+
+            <input type="hidden" id="TagIdsHidden" name="RawTagIds" value="" />
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success me-2">Save</button>
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/site.js"></script>
+}

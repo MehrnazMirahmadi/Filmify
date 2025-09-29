@@ -2,14 +2,14 @@
 namespace Filmify.UI.Models;
 public class RegisterViewModel
 {
-    [Required(ErrorMessage = "نام کامل الزامی است")]
+    [Required(ErrorMessage = "name is requier")]
     public string FullName { get; set; }
 
-    [Required(ErrorMessage = "ایمیل الزامی است")]
-    [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
+    [Required(ErrorMessage = "Email is requeir")]
+    [EmailAddress(ErrorMessage = "Email not valid")]
     public string Email { get; set; }
 
-    [Required(ErrorMessage = "پسورد الزامی است")]
+    [Required(ErrorMessage = "password is requeir")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
 

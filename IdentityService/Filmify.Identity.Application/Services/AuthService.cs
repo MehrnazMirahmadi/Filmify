@@ -14,7 +14,7 @@ public class AuthService
         _roleManager = roleManager;
     }
 
-    // ثبت نام کاربر با roles اختیاری
+    //
     public async Task RegisterUserAsync(string fullName, string email, string password, List<string>? roles = null)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
@@ -31,12 +31,12 @@ public class AuthService
         if (!result.Succeeded)
             throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
 
-        // اختصاص Role
+      
         if (roles != null && roles.Any())
         {
             foreach (var roleName in roles)
             {
-                // اگر نقش وجود ندارد، بساز
+              
                 if (!await _roleManager.RoleExistsAsync(roleName))
                 {
                     await _roleManager.CreateAsync(new ApplicationRole { Name = roleName });
@@ -47,7 +47,7 @@ public class AuthService
         }
     }
 
-    // ورود کاربر و اعتبارسنجی پسورد
+ 
     public async Task<ApplicationUser?> LoginAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
@@ -57,7 +57,7 @@ public class AuthService
         return valid ? user : null;
     }
 
-    // اختصاص Role به کاربر موجود
+   
     public async Task AssignRolesAsync(long userId, List<string> roles)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
