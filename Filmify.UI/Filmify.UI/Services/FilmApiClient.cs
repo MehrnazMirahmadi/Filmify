@@ -83,14 +83,14 @@ public class FilmApiClient(HttpClient http)
         var response = await http.GetFromJsonAsync<PagedResult<FilmDto>>(query);
         return response ?? new PagedResult<FilmDto>();
     }
-    // --- Create Film
-    public async Task<FilmDto?> CreateFilmAsync(FilmUpdateDto dto)
-    {
-        var response = await http.PostAsJsonAsync("api/films", dto);
-        if (response.IsSuccessStatusCode)
-            return await response.Content.ReadFromJsonAsync<FilmDto>();
-        return null;
-    }
+    //// --- Create Film
+    //public async Task<FilmDto?> CreateFilmAsync(FilmUpdateDto dto)
+    //{
+    //    var response = await http.PostAsJsonAsync("api/films", dto);
+    //    if (response.IsSuccessStatusCode)
+    //        return await response.Content.ReadFromJsonAsync<FilmDto>();
+    //    return null;
+    //}
 
     // --- Update Film
     public async Task<FilmDto?> UpdateFilmAsync(long id, FilmUpdateDto dto)
@@ -132,6 +132,20 @@ public class FilmApiClient(HttpClient http)
         throw new Exception("Cannot create tag");
     }
 
+    // --Get Categories 
+    public async Task<List<CategoryDto>> GetAllCategoriesAsync()
+    {
+        var response = await http.GetFromJsonAsync<ApiResponse<KeysetPagingResult<CategoryDto, long>>>("api/category");
+        return response?.Data?.Items?.ToList() ?? new List<CategoryDto>();
+    }
+    // --- Create Film
+    public async Task<FilmDto?> CreateFilmAsync(FilmCreateDto dto)
+    {
+        var response = await http.PostAsJsonAsync("api/films", dto);
+        if (response.IsSuccessStatusCode)
+            return await response.Content.ReadFromJsonAsync<FilmDto>();
+        return null;
+    }
 
 }
 

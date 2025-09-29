@@ -1,4 +1,4 @@
-﻿// وقتی روی Edit کلیک می‌کنیم
+﻿//  Edit 
 $(document).on("click", ".edit-film", function () {
     var filmId = $(this).data("id");
 
@@ -7,12 +7,23 @@ $(document).on("click", ".edit-film", function () {
         var bsModal = new bootstrap.Modal(modalEl, { backdrop: "static" });
         bsModal.show();
 
-        // اینجا مقداردهی اولیه hidden input
+        //  hidden input
         updateHiddenTags();
     });
 });
 
-// اضافه کردن و حذف تگ
+$(document).on("click", "#addNewFilmBtn", function () {
+    $("#filmModalContent").load("/Films/Create", function () {
+        var modalEl = document.getElementById('filmModal');
+        var bsModal = new bootstrap.Modal(modalEl, { backdrop: "static" });
+        bsModal.show();
+
+       
+        updateHiddenTags();
+    });
+});
+
+// 
 $(document).on("click", "#addTagBtn", function () {
     let newTag = $("#newTagInput").val().trim();
     if (newTag) {
@@ -29,12 +40,12 @@ $(document).on("click", ".remove-tag", function (e) {
     updateHiddenTags();
 });
 
-// submit فرم
+// submit 
 $("#editFilmForm").on("submit", function () {
     updateHiddenTags();
 });
 
-// تابع برای بروزرسانی hidden input
+// update hidden input
 function updateHiddenTags() {
     let ids = [];
     $("#tagContainer .tag-badge").each(function () {
@@ -42,3 +53,30 @@ function updateHiddenTags() {
     });
     $("#TagIdsHidden").val(ids.join(","));
 }
+// AJAX submit 
+$(document).on("submit", "#createFilmForm", function (e) {
+    e.preventDefault();
+    updateHiddenTags();
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: '/Films/Create',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            if (response.success) {
+                $("#filmModal").modal('hide');
+                location.reload(); // 
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function (err) {
+            console.error(err);
+            alert("Error saving film.");
+        }
+    });
+});

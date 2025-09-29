@@ -1,4 +1,5 @@
-﻿using Filmify.Domain.ValueObjects;
+﻿using Filmify.Application.DTOs.Tag;
+using Filmify.Domain.ValueObjects;
 
 namespace Filmify.Application.DTOs.Film;
 
@@ -10,6 +11,9 @@ public class FilmCreateDto
     public long? Capacity { get; set; }
     public string? FileUrl { get; set; }
     public Guid RegisteringUserID { get; set; }
+    public long CategoryId { get; set; }
     public ICollection<long>? BoxIds { get; set; }
     public ICollection<long>? TagIds { get; set; }
+    public string RawTagIds { get; set; }
+    public List<TagDto> AllTags { get; set; } = new List<TagDto>();
 }

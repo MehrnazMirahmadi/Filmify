@@ -3,7 +3,6 @@ using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
 using Filmify.Application.DTOs;
 using Filmify.Application.DTOs.Film;
-using Filmify.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Filmify.Api.Controllers;
@@ -11,29 +10,6 @@ namespace Filmify.Api.Controllers;
 [ApiController]
 public class FilmsController(IFilmService filmService) : ControllerBase
 {
-
-
-
-
-    // GET: api/Film
-    //[HttpGet]
-    //public async Task<IActionResult> GetAll([FromQuery] FilmFilterRequest filter)
-    //{
-
-    //    var sortOptions = new SortOptions
-    //    {
-    //        SortBy = "FilmId",
-    //        Direction = filter.Direction
-    //    };
-
-    //    var result = await filmService.GetFilmsAsync(filter, sortOptions);
-
-    //    if (result.IsRight)
-    //        return Ok(result.Right);
-    //    else
-    //        return NotFound(new { Message = result.Left });
-
-    //}
 
     // GET: api/Films/{id}
     [HttpGet("{id}")]

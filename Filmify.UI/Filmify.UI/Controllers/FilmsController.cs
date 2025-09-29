@@ -1,5 +1,7 @@
 ﻿using Filmify.Application.Common.Paging;
+using Filmify.Application.DTOs.Box;
 using Filmify.Application.DTOs.Film;
+using Filmify.Application.DTOs.Tag;
 using Filmify.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +14,7 @@ public class FilmsController(FilmApiClient api) : Controller
         var films = await api.GetFilmsAsync();
         return View(films);
     }
+
     public async Task<IActionResult> Search(string searchText, string lastKey = "")
     {
         var paging = new KeysetPagingRequest
@@ -30,15 +33,6 @@ public class FilmsController(FilmApiClient api) : Controller
         var result = await api.GetPagedFilmsAsync(searchText ?? "", pageNumber, pageSize);
         return View(result);
     }
-    [HttpGet]
-    public IActionResult Create()
-    {
-        return View(new FilmCreateDto());
-    }
-
-
-
-
     [HttpGet]
     public async Task<IActionResult> Edit(long id)
     {
@@ -66,7 +60,7 @@ public class FilmsController(FilmApiClient api) : Controller
     {
         var finalTagIds = new List<long>();
 
-        // پردازش تگ‌ها از رشته‌ی RawTagIds
+        
         if (!string.IsNullOrEmpty(dto.RawTagIds))
         {
             var tags = dto.RawTagIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -75,7 +69,7 @@ public class FilmsController(FilmApiClient api) : Controller
             {
                 if (tag.StartsWith("new_"))
                 {
-                    // تبدیل new_Tag به تگ واقعی
+                   
                     var tagText = tag.Substring(4).Replace("_", " ");
                     var newTagId = await api.CreateTagAsync(tagText);
                     finalTagIds.Add(newTagId);
@@ -89,7 +83,6 @@ public class FilmsController(FilmApiClient api) : Controller
 
         dto.TagIds = finalTagIds;
 
-        // مدیریت فایل کاور
         if (Request.Form.Files.Any())
         {
             var coverFile = Request.Form.Files["coverFile"];
@@ -106,12 +99,12 @@ public class FilmsController(FilmApiClient api) : Controller
         }
         else
         {
-            // اگر فایل جدیدی نیومده، همون قبلی رو نگه داریم
+       
             var existingFilm = await api.GetFilmByIdAsync(dto.FilmId);
             dto.CoverImage = existingFilm.CoverImage;
         }
 
-        // بروزرسانی فیلم
+   
         await api.UpdateFilmAsync(dto.FilmId, dto);
 
         return RedirectToAction("Index");
@@ -123,4 +116,70 @@ public class FilmsController(FilmApiClient api) : Controller
         await api.DeleteFilmAsync(id);
         return RedirectToAction("Index");
     }
+
+
+    [HttpGet]
+    public async Task<IActionResult> Create()
+    {
+        var boxes = await api.GetAllBoxesAsync() ?? new List<BoxDto>();
+        var tags = await api.GetAllTagsAsync() ?? new List<TagDto>();
+        ViewBag.Categories = await api.GetAllCategoriesAsync();
+        ViewBag.Boxes = boxes;
+        ViewBag.Tags = tags;
+
+        var model = new FilmCreateDto
+        {
+            AllTags = tags.ToList()
+        };
+
+        return PartialView("_CreateFilm", model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(FilmCreateDto dto)
+    {
+        
+        var finalTagIds = new List<long>();
+        if (!string.IsNullOrEmpty(dto.RawTagIds))
+        {
+            var tags = dto.RawTagIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var tag in tags)
+            {
+                if (tag.StartsWith("new_"))
+                {
+                    var tagText = tag.Substring(4).Replace("_", " ");
+                    var newTagId = await api.CreateTagAsync(tagText);
+                    finalTagIds.Add(newTagId);
+                }
+                else if (long.TryParse(tag, out var tagId))
+                {
+                    finalTagIds.Add(tagId);
+                }
+            }
+        }
+        dto.TagIds = finalTagIds;
+
+        // 
+        if (Request.Form.Files.Any())
+        {
+            var coverFile = Request.Form.Files["coverFile"];
+            if (coverFile != null)
+            {
+                var fileName = Guid.NewGuid() + Path.GetExtension(coverFile.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img/covers", fileName);
+                using var stream = new FileStream(path, FileMode.Create);
+                await coverFile.CopyToAsync(stream);
+                dto.CoverImage = fileName;
+            }
+        }
+
+        var film = await api.CreateFilmAsync(dto);
+
+        if (film == null)
+            return Json(new { success = false, message = "Error creating film" });
+
+        return Json(new { success = true, message = "Film created successfully" });
+    }
+
+
 }

@@ -1,7 +1,10 @@
-﻿using Filmify.Application.Common.Sorting;
+﻿using Filmify.Application.Common.Paging;
+using Filmify.Application.Common.Sorting;
 using Filmify.Application.Contracts;
+using Filmify.Application.DTOs;
 using Filmify.Application.DTOs.Category;
 using Filmify.Application.DTOs.Film;
+using Filmify.Application.DTOs.Tag;
 using Filmify.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,11 +27,9 @@ namespace Filmify.Api.Controllers
 
             var result = await categoryService.GetCategoriesAsync(filter, sortOptions);
 
-            if (result.IsRight)
-                return Ok(result.Right);
-            else
-                return NotFound(new { Message = result.Left });
-
+            return result.IsRight
+                ? Ok(ApiResponse<KeysetPagingResult<CategoryDto, long>>.Ok(result.Right))
+                : NotFound(ApiResponse<KeysetPagingResult<CategoryDto, long>>.Fail(result.Left));
         }
     }
 }
