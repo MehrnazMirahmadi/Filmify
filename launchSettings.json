@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "filmify.api": "StartDebugging",
+        "filmify.ui": "StartDebugging",
+        "filmify.identity.api": "StartDebugging"
+      }
+    }
+  }
+}

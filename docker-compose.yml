@@ -1,0 +1,39 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SwN12345678
+    ports:
+      - "1436:1433"
+    networks:
+      - appnet
+
+  filmify.api:
+    image: ${DOCKER_REGISTRY-}filmifyapi
+    build:
+      context: .
+      dockerfile: Filmify.Api/Filmify.Api/Dockerfile
+    networks:
+      - appnet
+  filmify.ui:
+    image: ${DOCKER_REGISTRY-}filmifyui
+    build:
+      context: .
+      dockerfile: Filmify.UI/Filmify.UI/Dockerfile
+    networks:
+      - appnet
+
+
+  filmify.identity.api:
+    image: ${DOCKER_REGISTRY-}filmifyidentityapi
+    build:
+      context: .
+      dockerfile: IdentityService/Filmify.Identity.Api/Dockerfile
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
+

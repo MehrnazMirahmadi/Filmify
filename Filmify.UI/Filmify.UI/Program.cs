@@ -12,7 +12,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<FilmApiClient>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7053/");
+    //client.BaseAddress = new Uri("https://localhost:7053/");
+    client.BaseAddress = new Uri("http://filmify.api:8080");
 }).AddTransientHttpErrorPolicy(policyBuilder =>
     policyBuilder.WaitAndRetryAsync(
         3,
@@ -20,10 +21,12 @@ builder.Services.AddHttpClient<FilmApiClient>(client =>
     )
 );
 // HttpClient ???? Identity API
+var identityApiUrl = builder.Configuration["ApiUrls:IdentityApi"] ?? "http://localhost:7246";
 builder.Services.AddHttpClient<IdentityApiClient>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7246/");
-}).AddTransientHttpErrorPolicy(policyBuilder =>
+    client.BaseAddress = new Uri(identityApiUrl);
+})
+.AddTransientHttpErrorPolicy(policyBuilder =>
     policyBuilder.WaitAndRetryAsync(
         3,
         retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
