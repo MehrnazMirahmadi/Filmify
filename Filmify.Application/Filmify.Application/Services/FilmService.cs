@@ -9,19 +9,36 @@ using Filmify.Application.DTOs.Tag;
 using Filmify.Domain.Contracts.Interfaces;
 using Filmify.Domain.Entities;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Filmify.Application.Services;
 
-public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService pagingService) : IFilmService
+public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService pagingService, IMemoryCache cache, IPerformanceMonitoringService performanceMonitor) : IFilmService
 {
 
     public async Task<Either<string, FilmDto>> GetFilmByIdAsync(long id)
     {
-        Console.WriteLine($"Fetching Film with id={id}");
+        using var timer = performanceMonitor.StartTimer("GetFilmById");
+        performanceMonitor.IncrementCounter("film_requests");
+        
+        var cacheKey = $"film_{id}";
+        
+        // Try to get from cache first
+        if (cache.TryGetValue(cacheKey, out FilmDto? cachedFilm))
+        {
+            performanceMonitor.IncrementCounter("cache_hits");
+            return Either<string, FilmDto>.Success(cachedFilm!);
+        }
+
+        performanceMonitor.IncrementCounter("cache_misses");
         var film = await unitOfWork.Films.GetFilmWithRelationsAsync(id);
         if (film == null) return Either<string, FilmDto>.Fail("Film not found");
 
         var dto = mapper.Map<FilmDto>(film);
+        
+        // Cache the result for 15 minutes
+        cache.Set(cacheKey, dto, TimeSpan.FromMinutes(15));
+        
         return Either<string, FilmDto>.Success(dto);
     }
     public async Task<Either<string, KeysetPagingResult<FilmDto, long>>> GetFilmsAsync(
@@ -84,6 +101,9 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
         var filmWithRelations = await unitOfWork.Films.GetFilmWithRelationsAsync(film.FilmId);
         var filmDto = mapper.Map<FilmDto>(filmWithRelations);
 
+        // Cache the new film
+        cache.Set($"film_{film.FilmId}", filmDto, TimeSpan.FromMinutes(15));
+
         return Either<string, FilmDto>.Success(filmDto);
 
     }
@@ -140,6 +160,9 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
         var filmDto = mapper.Map<FilmDto>(film);
 
+        // Update cache
+        cache.Set($"film_{film.FilmId}", filmDto, TimeSpan.FromMinutes(15));
+
         return Either<string, FilmDto>.Success(filmDto);
     }
 
@@ -151,6 +174,9 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
 
         await unitOfWork.Films.DeleteAsync(id);
         await unitOfWork.CommitAsync();
+
+        // Remove from cache
+        cache.Remove($"film_{id}");
 
         return Either<string, bool>.Success(true);
     }
@@ -203,9 +229,9 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
         try
         {
             var query = unitOfWork.Films.QueryWithRelations()
-                .Where(f => f.CategoryId == categoryId)
-                .OrderByDescending(f => f.ReleaseDate)
-                .Take(count);
+                 .Where(f => f.CategoryId == categoryId)
+                 .OrderByDescending(f => f.ReleaseDate)
+                 .Take(count);
 
             var films = unitOfWork.Films.QueryWithRelations()
                      .Where(f => f.CategoryId == categoryId)
@@ -224,10 +250,6 @@ public class FilmService(IUnitOfWork unitOfWork, IMapper mapper, IPagingService 
                          ReleaseYear = f.ReleaseDate?.Year
                      })
                      .ToList();
-
-
-
-
 
             return Either<string, List<FilmDto>>.Success(films);
         }

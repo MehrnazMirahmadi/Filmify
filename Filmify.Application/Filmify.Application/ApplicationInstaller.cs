@@ -3,6 +3,7 @@ using Filmify.Application.Contracts;
 using Filmify.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Filmify.Application
 {
@@ -10,6 +11,13 @@ namespace Filmify.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            // --- Caching
+            services.AddMemoryCache();
+            services.AddScoped<ICachingService, CachingService>();
+            
+            // --- Performance Monitoring
+            services.AddScoped<IPerformanceMonitoringService, PerformanceMonitoringService>();
+            
             // --- Application Services
             services.AddScoped<IFilmService, FilmService>();
             services.AddScoped<ICategoryService, CategoryService>();

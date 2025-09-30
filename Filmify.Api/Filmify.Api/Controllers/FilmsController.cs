@@ -4,6 +4,7 @@ using Filmify.Application.Contracts;
 using Filmify.Application.DTOs;
 using Filmify.Application.DTOs.Film;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace Filmify.Api.Controllers;
 [Route("api/[controller]")]
@@ -15,11 +16,33 @@ public class FilmsController(IFilmService filmService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var result = await filmService.GetFilmByIdAsync(id);
+        if (id <= 0)
+        {
+            Log.Warning("Invalid film ID provided: {FilmId}", id);
+            return BadRequest(ApiResponse<FilmDto>.Fail("Invalid film ID"));
+        }
 
-        return result.IsRight
-            ? Ok(ApiResponse<FilmDto>.Ok(result.Right))
-            : NotFound(ApiResponse<FilmDto>.Fail(result.Left));
+        try
+        {
+            Log.Information("Fetching film with ID: {FilmId}", id);
+            var result = await filmService.GetFilmByIdAsync(id);
+
+            if (result.IsRight)
+            {
+                Log.Information("Successfully fetched film with ID: {FilmId}", id);
+                return Ok(ApiResponse<FilmDto>.Ok(result.Right));
+            }
+            else
+            {
+                Log.Warning("Film not found with ID: {FilmId}", id);
+                return NotFound(ApiResponse<FilmDto>.Fail(result.Left));
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error fetching film with ID: {FilmId}", id);
+            return StatusCode(500, ApiResponse<FilmDto>.Fail("An error occurred while fetching the film"));
+        }
     }
 
     // GET: api/Films
@@ -38,11 +61,37 @@ public class FilmsController(IFilmService filmService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] FilmCreateDto dto)
     {
-        var result = await filmService.CreateFilmAsync(dto);
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            Log.Warning("Validation failed for film creation: {Errors}", string.Join(", ", errors));
+            return BadRequest(ApiResponse<FilmDto>.Fail($"Validation failed: {string.Join(", ", errors)}"));
+        }
 
-        return result.IsRight
-            ? Ok(ApiResponse<FilmDto>.Ok(result.Right))
-            : BadRequest(ApiResponse<FilmDto>.Fail(result.Left));
+        try
+        {
+            Log.Information("Creating new film: {FilmTitle}", dto.FilmTitle);
+            var result = await filmService.CreateFilmAsync(dto);
+
+            if (result.IsRight)
+            {
+                Log.Information("Successfully created film with ID: {FilmId}", result.Right?.FilmId);
+                return Ok(ApiResponse<FilmDto>.Ok(result.Right));
+            }
+            else
+            {
+                Log.Warning("Failed to create film: {Error}", result.Left);
+                return BadRequest(ApiResponse<FilmDto>.Fail(result.Left));
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error creating film: {FilmTitle}", dto.FilmTitle);
+            return StatusCode(500, ApiResponse<FilmDto>.Fail("An error occurred while creating the film"));
+        }
     }
 
     // PUT: api/Films/{id}
