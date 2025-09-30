@@ -13,6 +13,14 @@ Filmify is a modular .NET 9 solution for managing films, categories, tags, and c
 
 All projects target **.NET 9**.
 
+## What's new
+- Structured logging with Serilog (console + rolling file logs under `logs/`)
+- Global exception handling middleware with consistent API error responses
+- Basic IP-based rate limiting (100 requests/min per client)
+- Health checks with `/health` endpoint and EF Core DB check
+- In-memory caching for film lookups with cache invalidation on update/delete
+- Performance monitoring service for timing and lightweight metrics
+
 ## Prerequisites
 - .NET SDK 9.x (`dotnet --info`)
 - SQL Server (LocalDB, Developer, or container)
@@ -71,12 +79,28 @@ dotnet run --project Filmify/Filmify.UI/Filmify.UI/Filmify.UI.csproj
 dotnet run --project IdentityService/Filmify.Identity.Api/Filmify.Identity.Api.csproj
 ```
 
+When the API is running:
+- Swagger UI: `/swagger`
+- Health checks: `/health`
+
 ## API overview
 When running `Filmify.Api`, navigate to `/swagger` for interactive docs. Controllers include:
 - `FilmsController`
 - `CategoryController`
 - `TagController`
 - `BoxesController`
+
+### Response shape
+Most endpoints return a consistent wrapper:
+
+```startLine:endLine:Filmify/Filmify.Application/Filmify.Application/DTOs/ApiResponse.cs
+public class ApiResponse<T>
+{
+    public bool Success { get; set; } = true;
+    public string? Message { get; set; }
+    public T? Data { get; set; }
+}
+```
 
 ## Migrations: common commands
 Create a new migration in Infrastructure:
@@ -101,11 +125,36 @@ Repeat similarly for Identity by switching to its `*.Infrastructure.csproj` and 
   - `ConnectionStrings__Default`
   - `ASPNETCORE_ENVIRONMENT` (e.g., Development)
 
+### Logging (Serilog)
+Serilog is configured in `Program.cs` and reads from configuration. Default sinks:
+- Console
+- Rolling file: `logs/filmify-<date>.txt`
+
+Optional keys in `appsettings*.json`:
+- `Serilog:MinimumLevel:Default` (e.g., Information)
+- `Serilog:WriteTo` (configure additional sinks)
+
+### CORS
+Default origin: `https://localhost:7239`. Configure in `Program.cs` or via settings.
+
+### Health checks
+Endpoint: `/health`. Includes database connectivity check via EF Core.
+
+### Rate limiting
+Simple in-memory IP-based limit: 100 requests per minute. Implemented via middleware in API. Adjust limits in `RateLimitingMiddleware` if needed.
+
+### Caching
+In-memory caching used for film details. Entries expire after ~15 minutes and are invalidated on updates/deletes. For distributed scenarios, consider Redis.
+
+### Performance monitoring
+`PerformanceMonitoringService` provides simple timers and counters used within services to record durations and cache hit/miss counts.
+
 ## Troubleshooting
 - EF Tools not found: install with `dotnet tool install -g dotnet-ef` and restart shell.
 - Migrations errors: verify the `--project` points to `Filmify.Infrastructure` and `--startup-project` to `Filmify.Api` (or the Identity equivalents) and that connection strings are valid.
 - SQL connectivity: confirm the SQL Server instance is reachable and the database user has permissions.
 - Swagger not loading: ensure API is running and browse to `/swagger` on the API’s base URL.
+- Health checks failing: verify DB connection and that migrations have been applied. Check logs in `logs/`.
 
 ## License
 Licensed under the terms in `LICENSE.txt`.

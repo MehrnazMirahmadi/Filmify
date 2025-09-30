@@ -80,3 +80,4 @@ public class CachingService : ICachingService
         _logger.LogWarning("Pattern-based cache removal not supported with IMemoryCache. Pattern: {Pattern}", pattern);
     }
 }
+
